@@ -34,8 +34,8 @@ class servo:
     @max_angle.setter
     def max_angle(self,val):
         self._max_angle = val
-        self.slope = self.calculate_slope(self.max_dutyCycle,self.min_dutyCycle,self.max_angle,self.min_angle)
-        print("new slope : " +self.slope)
+        self.slope = self.calculate_slope(self.max_dutyCycle,self.min_dutyCycle,self._max_angle,self.min_angle)
+        print("new slope : " +str(self.slope))
         return self._max_angle
     
     @property
