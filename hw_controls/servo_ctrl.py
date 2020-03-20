@@ -5,6 +5,7 @@ GPIO.setmode(GPIO.BOARD)
 class servo:
 
     def __init__(self):
+        self._frequency = 50
         self._max_angle = 120
         self._min_angle = 0
         self._cur_angle = 60
@@ -30,14 +31,16 @@ class servo:
     @property
     def max_angle(self):
         return self._max_angle
+    @max_angle.setter
+    def max_angle(self,val):
+        self._max_angle = val
+        self.slope = self.calculate_slope(self.max_dutyCycle,self.min_dutyCycle,self.max_angle,self.min_angle)
+        print("new slope : " +self.slope)
+        return self._max_angle
     
     @property
     def min_angle(self):
         return self._min_angle
-     
-    @property
-    def cur_angle(self):
-        return self._cur_angle
     
     @property
     def max_dutyCycle(self):
@@ -46,11 +49,7 @@ class servo:
     @property
     def min_dutyCycle(self):
         return self._min_dutyCycle
-
-    @property
-    def cur_dutyCycle(self):
-        return self._cur_dutyCycle
-    
+       
     @property
     def pwm_pin(self):
         return self._pwm_pin
@@ -58,3 +57,16 @@ class servo:
     @property
     def slope_offset(self):
         return self._slope_offset
+    
+    @property 
+    def frequency(self):
+        return self._frequency
+    
+    @property
+    def cur_angle(self):
+        return self._cur_angle
+    
+    @property
+    def cur_dutyCycle(self):
+        return self._cur_dutyCycle
+
