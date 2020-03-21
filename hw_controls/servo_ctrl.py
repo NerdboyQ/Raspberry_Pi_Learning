@@ -81,7 +81,7 @@ class servo:
     @pwm_pin.setter
     def pwm_pin(self,val):
         self.pwm_channel.stop()
-        self._pwm_pin = 
+        self._pwm_pin = val
         GPIO.setup(self._pwm_pin,GPIO.BOARD)
         self.pwm_channel = GPIO.PWM(self._pwm_pin,self.frequency)
         self.pwm_channel.start((self.cur_duty_cycle)*100)
