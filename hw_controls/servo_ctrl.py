@@ -15,7 +15,7 @@ class servo:
         self._pwm_pin = 12
         self._slope_offset = .05
         
-        
+        GPIO.setup(self._pwm_pin,GPIO.BOARD)
         self._pwm_channel = GPIO.PWM(self._pwm_pin,self._frequency)
         self._pwm_channel.start((self._cur_duty_cycle)*100)
         self.slope = self.calculate_slope(self.max_dutyCycle,self.min_dutyCycle,self.max_angle,self.min_angle)
@@ -81,7 +81,8 @@ class servo:
     @pwm_pin.setter
     def pwm_pin(self,val):
         self.pwm_channel.stop()
-        self._pwm_pin = val
+        self._pwm_pin = 
+        GPIO.setup(self._pwm_pin,GPIO.BOARD)
         self.pwm_channel = GPIO.PWM(self._pwm_pin,self.frequency)
         self.pwm_channel.start((self.cur_duty_cycle)*100)
         return self._pwm_pin
