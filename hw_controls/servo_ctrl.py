@@ -88,6 +88,10 @@ class servo:
         return self._pwm_pin
     
     @property
+    def pwm_channel(self):
+        return self._pwm_channel
+    
+    @property
     def slope_offset(self):
         return self._slope_offset
     
