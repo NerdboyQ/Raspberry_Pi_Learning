@@ -17,7 +17,7 @@ class servo:
         
         GPIO.setup(self._pwm_pin,GPIO.OUT)
         self._pwm_channel = GPIO.PWM(self._pwm_pin,self._frequency)
-        self._pwm_channel.start((self._cur_duty_cycle)*100)
+        self._pwm_channel.start((self._cur_dutyCycle)*100)
         self.slope = self.calculate_slope(self.max_dutyCycle,self.min_dutyCycle,self.max_angle,self.min_angle)
         print("Servo_Created with slope: " +str(self.slope))
 
@@ -84,7 +84,7 @@ class servo:
         self._pwm_pin = val
         GPIO.setup(self._pwm_pin,GPIO.OUT)
         self.pwm_channel = GPIO.PWM(self._pwm_pin,self.frequency)
-        self.pwm_channel.start((self.cur_duty_cycle)*100)
+        self.pwm_channel.start((self.cur_dutyCycle)*100)
         return self._pwm_pin
     
     @property
