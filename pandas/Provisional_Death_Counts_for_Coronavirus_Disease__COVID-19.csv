@@ -1,0 +1,82 @@
+﻿Group,Indicator,All COVID-19 Deaths (U07.1),Deaths from All Causes,Percent of Expected Deaths,All Pneumonia Deaths (J12.0-J18.9),Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1),All Influenza Deaths (J09-J11)
+By week,Total Deaths,"4,984","511,424",0.89,"36,423","2,341","4,541"
+By week,2/1/2020,0,"56,402",0.95,"3,618",0,452
+By week,2/8/2020,0,"56,737",0.95,"3,601",0,483
+By week,2/15/2020,0,"55,273",0.94,"3,580",0,489
+By week,2/22/2020,0,"54,859",0.94,"3,427",0,502
+By week,2/29/2020,5,"54,513",0.95,"3,464",3,573
+By week,3/7/2020,18,"53,801",0.93,"3,552",11,555
+By week,3/14/2020,45,"51,305",0.9,"3,474",22,533
+By week,3/21/2020,423,"49,390",0.87,"3,762",197,446
+By week,3/28/2020,"1,891","46,581",0.83,"4,363",871,314
+By week,4/4/2020,"2,602","32,563",0.58,"3,582","1,237",194
+By age,All ages,"4,984","511,424",0.89,"36,423","2,341","4,541"
+By age,Under 1 year,0,"2,727",0.65,19,0,9
+By age,1&ndash;4 years,1,552,0.76,27,1,26
+By age,5&ndash;14 years,1,809,0.73,26,0,34
+By age,15&ndash;24 years,6,"4,638",0.81,87,2,35
+By age,25&ndash;34 years,46,"9,624",0.86,257,21,106
+By age,35&ndash;44 years,129,"13,847",0.89,538,44,160
+By age,45&ndash;54 years,291,"26,652",0.8,"1,416",119,375
+By age,55&ndash;64 years,624,"64,579",0.86,"4,247",269,816
+By age,65&ndash;74 years,"1,085","100,368",0.91,"7,397",456,976
+By age,75&ndash;84 years,"1,372","126,612",0.92,"10,139",691,"1,025"
+By age,85 years and over,"1,429","161,016",0.88,"12,270",738,979
+By state,Total US,"4,984","511,424",0.89,"36,423","2,341","4,541"
+By state,Alabama,14,"9,220",0.87,539,4,75
+By state,Alaska,1,627,0.75,31,1,3
+By state,Arizona,26,"11,862",0.97,748,13,95
+By state,Arkansas,3,"5,938",0.92,372,2,62
+By state,California,175,"52,505",0.94,"4,170",96,511
+By state,Colorado,62,"7,787",0.98,493,33,77
+By state,Connecticut,0,0,0,0,0,0
+By state,Delaware,1,"1,333",0.71,65,1,9
+By state,District of Columbia,4,"1,074",0.88,91,4,5
+By state,Florida,145,"41,586",0.97,"2,722",83,249
+By state,Georgia,58,"14,437",0.85,802,34,83
+By state,Hawaii,0,"2,163",0.92,149,0,16
+By state,Idaho,11,"2,757",0.96,146,4,24
+By state,Illinois,75,"21,128",0.98,"1,541",46,150
+By state,Indiana,41,"12,420",0.92,934,18,110
+By state,Iowa,7,"5,672",0.92,406,2,75
+By state,Kansas,9,"4,903",0.9,324,3,78
+By state,Kentucky,6,"7,401",0.76,629,3,72
+By state,Louisiana,105,"7,555",0.82,375,43,55
+By state,Maine,8,"2,947",1,250,5,29
+By state,Maryland,45,"9,842",0.97,725,22,89
+By state,Massachusetts,139,"11,921",0.97,"1,029",74,134
+By state,Michigan,251,"18,895",0.96,"1,292",115,191
+By state,Minnesota,17,"8,614",0.97,591,6,108
+By state,Mississippi,25,"5,998",0.94,497,11,50
+By state,Missouri,16,"11,319",0.86,674,7,153
+By state,Montana,3,"1,911",0.91,116,1,30
+By state,Nebraska,3,"2,982",0.86,231,2,24
+By state,Nevada,23,"4,896",0.94,349,19,34
+By state,New Hampshire,11,"2,457",0.98,162,6,29
+By state,New Jersey,527,"15,644",1.03,"1,244",271,92
+By state,New Mexico,0,"3,168",0.85,212,0,21
+By state,New York,713,"20,911",1.03,"2,179",420,166
+By state,New York City,"1,956","14,535",1.33,"1,947",761,204
+By state,North Carolina,0,"4,951",0.26,299,0,42
+By state,North Dakota,1,"1,256",0.89,108,0,15
+By state,Ohio,4,"19,679",0.78,992,2,182
+By state,Oklahoma,15,"6,646",0.81,572,4,74
+By state,Oregon,20,"6,314",0.86,330,13,49
+By state,Pennsylvania,131,"19,980",0.72,"1,222",65,164
+By state,Rhode Island,1,"1,702",0.8,81,1,21
+By state,South Carolina,20,"9,711",0.97,548,7,85
+By state,South Dakota,2,"1,426",0.86,107,0,18
+By state,Tennessee,16,"13,985",0.94,"1,019",7,112
+By state,Texas,15,"35,928",0.88,"2,481",3,277
+By state,Utah,4,"3,675",0.98,217,1,36
+By state,Vermont,1,"1,097",0.94,63,1,14
+By state,Virginia,34,"13,282",0.96,633,12,86
+By state,Washington,218,"11,140",0.95,862,110,92
+By state,West Virginia,0,"2,916",0.63,204,0,33
+By state,Wisconsin,22,"10,478",0.98,589,5,131
+By state,Wyoming,0,850,0.94,61,0,7
+By state,Puerto Rico,14,"3,407",0.59,471,12,24
+By sex,Total Deaths,"4,984","511,424",0.89,"36,423","2,341","4,541"
+By sex,Male,"2,993","262,727",0.9,"19,129","1,374","2,262"
+By sex,Female,"1,991","248,679",0.89,"17,294",967,"2,279"
+By sex,Unknown,0,18,0.82,0,0,0
