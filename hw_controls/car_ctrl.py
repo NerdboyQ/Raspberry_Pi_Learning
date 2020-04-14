@@ -3,6 +3,103 @@ from time import sleep
 
 GPIO.setmode(GPIO.BOARD)
 
+
+##~ For property setter methods to work, the class must inherent the 'object' class
+##~ NOTE: This class is still in development
+class driver(object):
+
+    def __init__(self):
+        self._frequency = 50
+        self._cur_dutyCycle = .18
+        self._min_dutyCycle = .18
+        self._max_dutyCycle = .18
+        self._drive_fwd_pin = 16
+        self._drive_rvr_pin = 18
+
+        GPIO.setup(self._drive_fwd_pin,GPIO.OUT)
+        GPIO.setup(self._drive_rvr_pin,GPIO.OUT)
+        self._drive_fwd_pwm_channel = GPIO.PWM(self._drive_fwd_pin,self._frequency)
+        self._drive_fwd_pwm_channel.start(0)
+        sleep(.5)
+        self._drive_rvr_pwm_channel = GPIO.PWM(self._drive_rvr_pin,self._frequency)
+        self._drive_rvr_pwm_channel.start(0)
+        sleep(.5)
+
+    def drive_vehicle(self,direction,speed):
+        print("This is a place holder to test driving forward/reverse for the vehicle.")
+
+    def stop_vehicle(self):
+        self._drive_fwd_pwm_channel.ChangeFrequency(0)
+        self._drive_rvr_pwm_channel.ChangeFrequency(0)
+
+    @property 
+    def frequency(self):
+        return self._frequency
+    
+    @frequency.setter 
+    def frequency(self,val):
+        self._frequency = val
+        self.drive_fwd_pwm_channel.ChangeFrequency(val)
+        self._drive_rvr_pwm_channel.ChangeFrequency(val)
+        return self._frequency
+
+    @property
+    def cur_dutyCycle(self):
+        return self._cur_dutyCycle
+
+    @property
+    def min_dutyCycle(self):
+        return self._min_dutyCycle
+
+    @property
+    def max_dutyCycle(self):
+        return self._max_dutyCycle
+    
+    @property
+    def drive_fwd_pin(self):
+        return self._drive_fwd_pin
+
+    @drive_fwd_pin.setter
+    def drive_fwd_pin(self,val):
+        pos_pwm_pins = [2,5,7,8,10,11,12,13,15,16,18,19,21,22,24,26,29,31,32,33,35,36,37,38,40]
+        if (str(pos_pwm_pins).find(", "+str(val)) != -1 or str(pos_pwm_pins).find(str(val)+".") != -1):
+            self.drive_fwd_pin.stop()
+            self.drive_fwd_pin = val
+            GPIO.setup(self.drive_fwd_pin,GPIO.OUT)
+            self.drive_fwd_pwm_channel = GPIO.PWM(self.drive_fwd_pin,self.frequency)
+            self.drive_fwd_pwm_channel.start(0)
+            sleep(.5)
+            self.drive_fwd_pwm_channel.start((self.cur_dutyCycle)*100)
+            sleep(1)
+            return self.drive_fwd_pin
+        else:
+            print("Sorry, but the desired servo pin provided was an invalid option.")
+            print("The following pins can be used for servo assignment:\n" +str(pos_pwm_pins))
+            return self._drive_fwd_pin
+
+    @property
+    def drive_rvr_pin(self):
+        return self._drive_rvr_pin
+
+    @drive_rvr_pin.setter
+    def drive_rvr_pin(self,val):
+        pos_pwm_pins = [2,5,7,8,10,11,12,13,15,16,18,19,21,22,24,26,29,31,32,33,35,36,37,38,40]
+        if (str(pos_pwm_pins).find(", "+str(val)) != -1 or str(pos_pwm_pins).find(str(val)+".") != -1):
+            self.drive_rvr_pin.stop()
+            self.drive_rvr_pin = val
+            GPIO.setup(self.drive_rvr_pin,GPIO.OUT)
+            self.drive_rvr_pwm_channel = GPIO.PWM(self.drive_rvr_pin,self.frequency)
+            self.drive_rvr_pwm_channel.start(0)
+            sleep(.5)
+            self.drive_rvr_pwm_channel.start((self.cur_dutyCycle)*100)
+            sleep(1)
+            return self.drive_rvr_pin
+        else:
+            print("Sorry, but the desired servo pin provided was an invalid option.")
+            print("The following pins can be used for servo assignment:\n" +str(pos_pwm_pins))
+            return self._drive_rvr_pin
+
+
 ##~ For property setter methods to work, the class must inherent the 'object' class
 class servo(object):
 
