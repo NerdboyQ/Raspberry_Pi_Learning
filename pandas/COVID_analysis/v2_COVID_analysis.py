@@ -19,7 +19,7 @@ def add_annotation_to_vertical_graph(plots):
 	for plot in plots:
 		for i in plot.patches:
 		    # get_width pulls left or right; get_y pushes up or down
-		    plot.text(i.get_x()+0.05, i.get_height()*1.01, str(i.get_height()), fontsize=8, color='white',rotation=45)
+		    plot.text(i.get_x()+0.05, i.get_height()*1.3, str(i.get_height()), fontsize=8, color='white',rotation=45)
 		plot.set_facecolor('darkgray') 
 		
 ref_dir = 'COVID-19'
@@ -89,8 +89,10 @@ print(us_max_deaths_df.head(10))
 fig1,ax1 = plt.subplots()
 subplot1 = us_max_deaths_df.head(10).plot(ax=ax1,x='Province_State',y='Deaths',kind='bar',title='Data Source: CDC, WHO, ECDC via John Hopkins repository')
 ax1.set_ylabel('COVID Deaths')
-add_annotation_to_vertical_graph([sub_plot1])
+ax1.set_ylim(0,us_max_deaths_df['Deaths'].values[0]*1.5)
+add_annotation_to_vertical_graph([subplot1])
 fig1.canvas.set_window_title('Top 10 States w/ Highest COVID Deaths')
-fig1.subplots_adjust(.35,.45,.95,.95)
+fig1.subplots_adjust(.05,.25,.95,.90)
+fig1.savefig("v2_output_plot.png")
 print(us_max_deaths_df.tail(10))
 plt.show()
