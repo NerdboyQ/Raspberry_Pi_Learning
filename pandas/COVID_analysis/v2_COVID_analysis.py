@@ -22,13 +22,24 @@ cwd = os.getcwd()
 ref_dir = cwd[:cwd.find('Rasp')]+ref_dir
 repo = git.Repo(ref_dir)
 repo.remotes.origin.pull()
-path_temp = ref_dir+"/"+fldr_1
-us_timeSeries_ccases_csv = glob.glob(path_temp+"\\*confirmed_US.csv")[0]
-us_timeSeries_deaths_csv = glob.glob(path_temp+"\\*deaths_US.csv")[0]
 
-us_timeSeries_deaths_df = pd.read_csv(us_timeSeries_deaths_csv)
-us_timeSeries_ccases_df = pd.read_csv(us_timeSeries_ccases_csv)
+##~ The try block below works for window's based systems (NOTE: the slashes differ between os's)
+try:
+    path_temp = ref_dir+"/"+fldr_1
+    us_timeSeries_ccases_csv = glob.glob(path_temp+"\\*confirmed_US.csv")[0]
+    us_timeSeries_deaths_csv = glob.glob(path_temp+"\\*deaths_US.csv")[0]
 
+    us_timeSeries_deaths_df = pd.read_csv(us_timeSeries_deaths_csv)
+    us_timeSeries_ccases_df = pd.read_csv(us_timeSeries_ccases_csv)
+
+##~ The except block below works for linux' based systems
+except Exception:
+    path_temp = ref_dir+"/"+fldr_1
+    us_timeSeries_ccases_csv = glob.glob(path_temp+"/*confirmed_US.csv")[0]
+    us_timeSeries_deaths_csv = glob.glob(path_temp+"/*deaths_US.csv")[0]
+
+    us_timeSeries_deaths_df = pd.read_csv(us_timeSeries_deaths_csv)
+    us_timeSeries_ccases_df = pd.read_csv(us_timeSeries_ccases_csv)
 
 left_of_df = us_timeSeries_deaths_df.loc[:,:'Population']
 right_of_df = us_timeSeries_deaths_df.loc[:,'Population':].drop(columns=['Population']) 
