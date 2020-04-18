@@ -79,4 +79,10 @@ for province in province_list:
 us_max_deaths_df = pd.concat(max_list).sort_values(by=['Deaths'],ascending=False).reset_index(drop=True)
 us_max_deaths_df.index+=1
 print(us_max_deaths_df.head(10))
+fig1,ax1 = plt.subplots()
+subplot1 = us_max_deaths_df.head(10).plot(ax=ax1,x='Province_State',y='Deaths',kind='bar',title='Data Source: CDC, WHO, ECDC via John Hopkins repository')
+ax1.set_ylabel('COVID Deaths')
+fig1.canvas.set_window_title('Top 10 States w/ Highest COVID Deaths')
+fig1.subplots_adjust(.25,.35,.95,.95)
 print(us_max_deaths_df.tail(10))
+plt.show()
