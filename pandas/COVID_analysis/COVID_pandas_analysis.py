@@ -11,7 +11,7 @@ def create_max_values_df(df,col,unique_keys,target_col):
 		df_temp = df[(df[col] == key) ]
 		df_temp = df_temp[(df[target_col] == df_temp[target_col].max())]
 		df_list.append(df_temp.head(1))
-	df_out = pd.concat(df_list).sort_values(by=target_col,ascending=False).reset_index(drop=True)
+	df_out = pd.concat(df_list).sort_values(by=target_col,ascending=False)._index(drop=True)
 	df_out.index+=1
 	return df_out
 
