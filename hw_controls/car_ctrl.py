@@ -44,6 +44,10 @@ class driver(object):
         self._drive_fwd_pwm_channel.ChangeDutyCycle(0)
         self._drive_rvr_pwm_channel.ChangeDutyCycle(0)
 
+    def kill_motor(self):
+        self._drive_fwd_pwm_channel.stop()
+        self._drive_rvr_pwm_channel.stop()
+
     @property 
     def frequency(self):
         return self._frequency

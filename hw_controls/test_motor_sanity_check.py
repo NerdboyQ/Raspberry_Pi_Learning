@@ -16,5 +16,6 @@ def test_motor_speed_and_direction():
         sleep(3)
 
     d.stop_vehicle()
+    d.kill_motor()
 
 test_motor_speed_and_direction()

@@ -1,21 +1,22 @@
-import time
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(12, GPIO.OUT)
+from car_ctrl import servo
 
-p = GPIO.PWM(12, 50)  # channel=12 frequency=50Hz
-p.start(0)
-try:
-    while 1:
-        for dc in range(2, 10, 1):
-            p.ChangeDutyCycle(dc)
-            time.sleep(0.05)
-        time.sleep(1)
-        for dc in range(9, 1, -1):
-            p.ChangeDutyCycle(dc)
-            time.sleep(0.05)
-        time.sleep(1)
-except KeyboardInterrupt:
-    pass
-p.stop()
-GPIO.cleanup()
+def test_servo_rotation():
+    s = servo()
+    print(vars(s))
+    print("max_angle: " +str(s.max_angle))
+    print("slope: " +str(s.slope))
+    for i in range(0,3):
+        s.steer(360)
+        print("turning left")
+
+    for i in range(0,6):
+        s.steer(0)
+        print("turning right")
+    
+    for i in range(0,3):
+        s.steer(360)
+        print("Return to center")
+
+    s.kill_servo()
+
+test_servo_rotation()
