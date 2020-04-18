@@ -67,6 +67,8 @@
   <li>sudo pip3 install opencv-python</li>
   <li>sudo pip3 install numpy
   <br><i>(If this doesn't work, it's probably already installed.)</i></li>
+  <li>sudo pip3 install gitpython</li>
+  <li>sudo pip3 install pandas</li>
 </ol>
 <h4>Final Few Steps</h4>
 <ul>
