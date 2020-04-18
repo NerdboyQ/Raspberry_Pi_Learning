@@ -26,11 +26,23 @@ class driver(object):
         sleep(.5)
 
     def drive_vehicle(self,direction,speed):
-        print("This is a place holder to test driving forward/reverse for the vehicle.")
+        channel_main = None
+        channel_null = None
+        if direction == 'f':
+            channel_main = self._drive_fwd_pwm_channel
+            channel_null = self._drive_rvr_pwm_channel
+        else:
+            channel_main = self._drive_rvr_pwm_channel
+            channel_null = self._drive_fwd_pwm_channel
+
+        channel_null.ChangeDutyCycle(0)
+        channel_main.ChangeDutyCycle(speed)
+
+
 
     def stop_vehicle(self):
-        self._drive_fwd_pwm_channel.ChangeFrequency(0)
-        self._drive_rvr_pwm_channel.ChangeFrequency(0)
+        self._drive_fwd_pwm_channel.ChangeDutyCycle(0)
+        self._drive_rvr_pwm_channel.ChangeDutyCycle(0)
 
     @property 
     def frequency(self):
