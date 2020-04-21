@@ -148,8 +148,11 @@ else:
 
 province_list = sorted(new_df['Province_State'].unique())
 ##|get_max_deaths_data(new_df,province_list)
-
-
+max_deaths_df = new_df.groupby(['Province_State'],as_index=False)['Deaths'].sum().sort_values(by=['Deaths'],ascending=False).reset_index(drop=True)
+max_deaths_df.index+=1
+print('-'*50)
+print('Top 10 States w/ Highest Death Toll by COVID-19:\n')
+print(max_deaths_df.head(10))
 ##~ Block for state specific history
 state = get_arguments()
 print('Analysis running for : ' +state)
