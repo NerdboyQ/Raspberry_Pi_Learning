@@ -8,7 +8,7 @@
 ##~            this is done using a git pull command w/ the gitpython (git) module.
 ##~
 
-import os, sys, time, glob, git, datetime
+import os, sys, time, glob, git, datetime, argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,12 +17,35 @@ from pprint import pprint
 
 
 start_time = datetime.datetime.now()
+def get_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--state', help='Please provide a state to consider.')
+    args = parser.parse_args()
+    state = str(args.state)
+    if state == 'None':
+        return('California')
+    return state
+
+def get_max_divisor(plot_point_count):
+    for i in range(2,20):
+        if plot_point_count%i ==0:
+            val = i
+
+    #val = plot_point_count/val
+    return val
+
 def add_annotation_to_vertical_graph(plots):
 	for plot in plots:
-		for i in plot.patches:
+            count = 1
+            inter_points = get_max_divisor(len(plot.patches))
+            for i in plot.patches:
+                if count == inter_points:
 		    # get_width pulls left or right; get_y pushes up or down
-		    plot.text(i.get_x()+0.05, i.get_height()*1.3, str(i.get_height()), fontsize=8, color='white',rotation=45)
-		plot.set_facecolor('darkgray') 
+                    plot.text(i.get_x()-0.5, i.get_height()*0.9, str(i.get_height()), fontsize=8, color='white',rotation=45)
+                    plot.set_facecolor('darkgray') 
+                    count = 1
+                else:
+                    count+=1
 
 def get_max_deaths_data(new_df,province_list):
     max_list = []
@@ -128,7 +151,12 @@ province_list = sorted(new_df['Province_State'].unique())
 
 
 ##~ Block for state specific history
-new_df_raw_fl = new_df_raw[(new_df_raw['Province_State'] == 'California')]
+state = get_arguments()
+print('Analysis running for : ' +state)
+new_df_raw_fl = new_df_raw[(new_df_raw['Province_State'] == state)]
+peak_death = new_df_raw_fl[(new_df_raw_fl['Deaths'] == new_df_raw_fl['Deaths'].max())]
+print('-'*50)
+print('Peak daily deaths for ' +state +' was ' +str(peak_death['Deaths'].values[0]) +' on ' +str(peak_death['Date'].values[0]))
 new_df_raw_fl = new_df_raw_fl.groupby('Date',as_index=False)['Deaths'].sum()
 new_df_raw_fl = new_df_raw_fl.sort_values(by=['Date','Deaths']).reset_index(drop=True)
 new_df_raw_fl = new_df_raw_fl[(new_df_raw_fl['Deaths'] != 0)]
@@ -138,14 +166,15 @@ new_df_raw = new_df_raw.groupby('Date',as_index=False)['Deaths'].sum()
 new_df_raw = new_df_raw.sort_values(by=['Date','Deaths']).reset_index(drop=True)'''
 
 new_df_raw_fl.to_csv('v2_output.csv')
-print(new_df_raw_fl.shape)
-
+##|print(new_df_raw_fl.shape)
+print('Total death toll for ' +state +' : ' +str(new_df_raw_fl['Deaths'].sum()))
 fig2, bx1 = plt.subplots()
 bx2 = bx1.twinx()
-sub_plot3 = new_df_raw_fl.plot(ax=bx1,x='Date',y='Deaths',kind='bar', title='COVID deaths for US')
-#sub_plot4 = new_df_raw_fl.plot(ax=bx2,x='Date',y='Deaths',kind='line')
-fig2.canvas.set_window_title('COVID TIME SERIES DATA')
+sub_plot3 = new_df_raw_fl.plot(ax=bx1,x='Date',y='Deaths',kind='bar', title='COVID deaths for US by state: ' +state)
+sub_plot4 = new_df_raw_fl.plot(ax=bx2,x='Date',y='Deaths',kind='line',marker='o',color='purple')
+fig2.canvas.set_window_title(state +' : COVID TIME SERIES DATA')
 add_annotation_to_vertical_graph([sub_plot3])
+fig2.subplots_adjust(bottom=0.35,left=0.1,right=0.9,top=0.9)
 stop_time = datetime.datetime.now()
 run_time = stop_time - start_time
 print('Total Runtime : ' +str(run_time))
