@@ -47,31 +47,6 @@ def add_annotation_to_vertical_graph(plots):
                 else:
                     count+=1
 
-def get_max_deaths_data(new_df,province_list):
-    max_list = []
-    for province in province_list:
-        temp_df = new_df[(new_df['Province_State'] == province)]
-        temp_df = temp_df[(temp_df['Deaths'] == temp_df['Deaths'].max())]
-        print('='*100)
-        print(temp_df.head(1))
-        if len(temp_df) > 0:
-                max_list.append(temp_df.head(1))
-    #print(province_list)
-    us_max_deaths_df = pd.concat(max_list).sort_values(by=['Deaths'],ascending=False).reset_index(drop=True)
-    us_max_deaths_df.index+=1
-    print(us_max_deaths_df.head(10))
-    fig1,ax1 = plt.subplots()
-    subplot1 = us_max_deaths_df.head(10).plot(ax=ax1,x='Province_State',y='Deaths',kind='bar',title='Top 10 Highest State for COVID Deaths\nData CDC, WHO, ECDC via John Hopkins repository')
-    ax1.set_ylabel('COVID Deaths')
-    ax1.set_ylim(0,us_max_deaths_df['Deaths'].values[0]*1.5)
-    add_annotation_to_vertical_graph([subplot1])
-    fig1.canvas.set_window_title('Top 10 States w/ Highest COVID Deaths')
-    fig1.subplots_adjust(.15,.35,.95,.90)
-    #plt.table(cellText=us_max_deaths_df.loc['Province_State','Deaths'],colWidths=0.25,rowLabels=us_max_deaths_df['Province_State'].values,colLabels=['Deaths'],cellLoc = 'center', rowLoc = 'center', loc = 'bottom')
-    fig1.savefig("v2_output_plot.png")
-    print(us_max_deaths_df.tail(10))
-    plt.show()
-
 ##~ Check date and time to make sure the data isn't duplicated unnecessarily 
 current_date_full = datetime.datetime.today()
 current_hour = current_date_full.hour
@@ -147,7 +122,7 @@ else:
 	new_df_raw = new_df
 
 province_list = sorted(new_df['Province_State'].unique())
-##|get_max_deaths_data(new_df,province_list)
+
 max_deaths_df = new_df.groupby(['Province_State'],as_index=False)['Deaths'].sum().sort_values(by=['Deaths'],ascending=False).reset_index(drop=True)
 max_deaths_df.index+=1
 print('-'*50)
