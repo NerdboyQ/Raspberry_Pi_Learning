@@ -27,6 +27,7 @@ def get_arguments():
     return state
 
 def get_max_divisor(plot_point_count):
+    val = 10	##~ Setting default value to avoid errors
     for i in range(2,20):
         if plot_point_count%i ==0:
             val = i
