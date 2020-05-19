@@ -48,7 +48,7 @@ print(df_grass_types[['Name','HP']])
 ##~ Create a new dataframe by concatenating, or linking, dataframes
 ##~ with similar data (i.e. same column headers and column count)
 df_water_n_grass = pd.concat([df_grass_types,df_water_types])
-print("Concat of Grass & Water Type pokémon dataframes:\n")
+print("Concat of Grass  Water Type pokémon dataframes:\n")
 print(df_water_n_grass)
 
 

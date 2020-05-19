@@ -120,13 +120,14 @@ class driver(object):
 class servo(object):
 
     def __init__(self):
-        self._frequency = 50
-        self._max_angle = 360                                       ##~Full right position/angle
+        self._frequency = 20
+        self._max_angle = 720                                       ##~Full right position/angle
         self._min_angle = 0                                         ##~Full left position/angle
         self._cur_angle = (self._max_angle-self._min_angle)/2       ##~The center position will be the default position/angle
         self._min_dutyCycle = .02
         self._max_dutyCycle = .18
         self._cur_dutyCycle = (self._max_dutyCycle-self._min_dutyCycle)/2
+        self._cur_dutyCycle = self._max_dutyCycle
         self._pwm_pin = 12
         self._slope_offset = .02
         
