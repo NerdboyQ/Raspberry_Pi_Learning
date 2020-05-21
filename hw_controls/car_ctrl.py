@@ -4,6 +4,7 @@ from time import sleep
 GPIO.setmode(GPIO.BOARD)
 
 
+
 ##~ For property setter methods to work, the class must inherent the 'object' class
 ##~ NOTE: This class is still in development
 class driver(object):
@@ -36,7 +37,7 @@ class driver(object):
             channel_null = self._drive_fwd_pwm_channel
 
         channel_null.ChangeDutyCycle(0)
-        channel_main.ChangeDutyCycle(speed)
+        #channel_main.ChangeDutyCycle(speed)
 
 
 
@@ -47,6 +48,7 @@ class driver(object):
     def kill_motor(self):
         self._drive_fwd_pwm_channel.stop()
         self._drive_rvr_pwm_channel.stop()
+        GPIO.cleanup()
 
     @property 
     def frequency(self):
@@ -120,23 +122,23 @@ class driver(object):
 class servo(object):
 
     def __init__(self):
-        self._frequency = 20
-        self._max_angle = 720                                       ##~Full right position/angle
+        self._frequency = 60
+        self._max_angle = 210                                       ##~Full right position/angle
         self._min_angle = 0                                         ##~Full left position/angle
         self._cur_angle = (self._max_angle-self._min_angle)/2       ##~The center position will be the default position/angle
-        self._min_dutyCycle = .02
-        self._max_dutyCycle = .18
+        self._min_dutyCycle = 2
+        self._max_dutyCycle = 18
         self._cur_dutyCycle = (self._max_dutyCycle-self._min_dutyCycle)/2
         self._cur_dutyCycle = self._max_dutyCycle
         self._pwm_pin = 12
-        self._slope_offset = .02
+        self._slope_offset = 2
         
         GPIO.setup(self._pwm_pin,GPIO.OUT)
         self._pwm_channel = GPIO.PWM(self._pwm_pin,self._frequency)
         self._pwm_channel.start(0)
         sleep(.5)
         #self._pwm_channel.ChangeDutyCycle((self._cur_dutyCycle)*100)                            ##~Centers servo on start
-        #sleep(.5)
+        #sleep(.5) 
         #self._pwm_channel.ChangeDutyCycle(0)
         self._slope = self.calculate_slope(self.max_dutyCycle,self.min_dutyCycle,self.max_angle,self.min_angle)
         print("Servo_Created with slope: " +str(self._slope))
@@ -148,7 +150,7 @@ class servo(object):
     def steer(self,des_pos):
         if (des_pos <= self.max_angle and des_pos >= self.min_angle):
             des_pos = float(des_pos)
-            req_dutyCycle = ((des_pos*self._slope)+self._slope_offset)*100
+            req_dutyCycle = (2+(des_pos/self._max_dutyCycle))
             self._pwm_channel.ChangeDutyCycle(req_dutyCycle)
             sleep(.5)
             self._pwm_channel.ChangeDutyCycle(0)

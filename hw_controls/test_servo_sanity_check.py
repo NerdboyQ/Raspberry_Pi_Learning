@@ -1,4 +1,5 @@
 from car_ctrl import servo
+import time
 
 def test_servo_rotation():
     s = servo()
@@ -8,13 +9,16 @@ def test_servo_rotation():
     for i in range(0,3):
         s.steer(s.max_angle)
         print("turning left")
+        time.sleep(0.5)
 
-    for i in range(0,6):
+    for i in range(0,3):
         s.steer(0)
+        time.sleep(0.5)
         print("turning right")
     
     for i in range(0,3):
         s.steer(s.max_angle)
+        time.sleep(0.5)
         print("Return to center")
 
     s.kill_servo()
