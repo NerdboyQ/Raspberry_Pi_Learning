@@ -152,7 +152,7 @@ class servo(object):
             des_pos = float(des_pos)
             req_dutyCycle = (2+(des_pos/self._max_dutyCycle))
             self._pwm_channel.ChangeDutyCycle(req_dutyCycle)
-            sleep(.5)
+            sleep(.25)
             self._pwm_channel.ChangeDutyCycle(0)
         
             print("Moving servo to position: " +str(int(des_pos)))

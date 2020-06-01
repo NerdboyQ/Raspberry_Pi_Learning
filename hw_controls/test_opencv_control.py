@@ -35,10 +35,10 @@ def find_and_center(object_xcenter,frame_xcenter,s):
         print("Object Centered")
         
     elif object_xcenter < xLimit_min:
-        print("Object too far left, turn left.")
-        s.steer(360)
-    elif object_xcenter > xLimit_max:
         print("Object too far right, turn right.")
+        s.steer(s.max_angle)
+    elif object_xcenter > xLimit_max:
+        print("Object too far left, steering.")
         s.steer(0)
     print(x_range)
 while True:

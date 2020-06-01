@@ -1,6 +1,7 @@
 from car_ctrl import servo
 import time
-
+#max angle turns right
+#0 turns left
 def test_servo_rotation():
     s = servo()
     print(vars(s))
