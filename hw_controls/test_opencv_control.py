@@ -35,6 +35,10 @@ def find_and_center(steering_pos,object_xcenter,frame_xcenter,s):
     x_range = (xLimit_min,xLimit_max)
     if object_xcenter < xLimit_max and object_xcenter > xLimit_min:
         print("Object Centered\t" +steering_pos)
+        if steering_pos == "R":
+            s.steer(0)    #straighten steering once centered, steer left
+        elif steering_pos == "L":
+            s.steer(s.max_angle)    #straighten steering once centered, steer right
         steering_pos = "C"
     elif object_xcenter < xLimit_min:
         print("Object too far right, turn right.\t" +steering_pos)
@@ -106,7 +110,7 @@ while True:
             #object_percentage = int((w*h)/(cap.get(3)*cap.get(44)))
             #|print(str(w/cap.get(3) *100) +"%")
             #|print(str(h/cap.get(4) *100) +"%")
-	    steering_pos = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
+            steering_pos = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
             break
     else:
         print("Object not detected")
@@ -128,6 +132,10 @@ while True:
     
 
 ##~Finally we will stop the camera capture session after quitting the loop and closing all the frame windows. 
+if steering_pos == "R":
+    s.steer(0)    #straighten steering once centered, steer left
+elif steering_pos == "L":
+    s.steer(s.max_angle)    #straighten steering once centered, steer right
 cap.release()
 cv2.destroyAllWindows()
 s.kill_servo()
