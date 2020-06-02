@@ -103,7 +103,6 @@ while True:
             #print("-"*100)
             #print("obj center x: " +str(object_xcenter))
             #print("range: " +str(frame_xcenter*0.9) +"-" +str(frame_xcenter*1.1) )
-            steering_po = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
             #object_percentage = int((w*h)/(cap.get(3)*cap.get(44)))
             #|print(str(w/cap.get(3) *100) +"%")
             #|print(str(h/cap.get(4) *100) +"%")
@@ -125,6 +124,7 @@ while True:
     key = cv2.waitKey(1)
     if key == 115:
         break
+    steering_po = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
 
 ##~Finally we will stop the camera capture session after quitting the loop and closing all the frame windows. 
 cap.release()
