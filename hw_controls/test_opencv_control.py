@@ -15,6 +15,7 @@ from car_ctrl import servo
 from car_ctrl import driver
 
 s = servo()
+steering_pos = 'C'
 
 cap = cv2.VideoCapture(0)
 
@@ -26,21 +27,27 @@ countours = []
 x_medium = 0
 y_medium = 0
 obj_dimensions = {}
-def find_and_center(object_xcenter,frame_xcenter,s):
+def find_and_center(steering_pos,object_xcenter,frame_xcenter,s):
+    
     range_percentage = 0.3    #~ Creating a 30% x range window
     xLimit_min = frame_xcenter *(1-range_percentage)
     xLimit_max = frame_xcenter *(1+range_percentage)
     x_range = (xLimit_min,xLimit_max)
     if object_xcenter < xLimit_max and object_xcenter > xLimit_min:
-        print("Object Centered")
-        
+        print("Object Centered\t" +steering_pos)
+        steering_pos = 'C'
     elif object_xcenter < xLimit_min:
-        print("Object too far right, turn right.")
-        s.steer(s.max_angle)
+        print("Object too far right, turn right.\t" +steering_pos)
+        if steering_pos != 'R':
+            s.steer(s.max_angle)
+        steering_pos = 'R'
     elif object_xcenter > xLimit_max:
-        print("Object too far left, steering.")
-        s.steer(0)
+        print("Object too far left, steering.\t" +steering_pos)
+        if steering_pos != 'L':
+            s.steer(0)
+        steering_pos = 'L'
     print(x_range)
+    return steering_pos
 while True:
     _, frame = cap.read() ##~ This line creates an instance of the frame to display the camera feed
     frame = cv2.flip(frame,flipCode=-1)   ##~ Camera is physically upside down, so rotate the frame
@@ -96,7 +103,7 @@ while True:
             #print("-"*100)
             #print("obj center x: " +str(object_xcenter))
             #print("range: " +str(frame_xcenter*0.9) +"-" +str(frame_xcenter*1.1) )
-            find_and_center(object_xcenter,frame_xcenter,s)
+            steering_po = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
             #object_percentage = int((w*h)/(cap.get(3)*cap.get(44)))
             #|print(str(w/cap.get(3) *100) +"%")
             #|print(str(h/cap.get(4) *100) +"%")
