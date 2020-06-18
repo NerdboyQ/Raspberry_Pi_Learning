@@ -37,7 +37,7 @@ class driver(object):
             channel_null = self._drive_fwd_pwm_channel
 
         channel_null.ChangeDutyCycle(0)
-        #channel_main.ChangeDutyCycle(speed)
+        channel_main.ChangeDutyCycle(speed)
 
 
 
