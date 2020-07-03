@@ -4,8 +4,12 @@
 {% extends 'picar/main.html' %}
 
 {% block main_head %}
-<ul>
-	<li>A</li>
-	<li>B</li>
-</ul>
+
 {% endblock %}
+
+{% block settings %}
+<li> <a id="cam_btn" class="btn-floating waves-effect waves-light red"><i class="material-icons">videocam</i></a></li>
+<li> <a id="ign_btn" class="btn-floating waves-effect waves-light red"><i class="material-icons">directions_car</i></a></li>
+<li> <a id="rst_btn" class="btn-floating waves-effect waves-light red"><i class="material-icons">autorenew</i></a></li>
+{% endblock %}
+
