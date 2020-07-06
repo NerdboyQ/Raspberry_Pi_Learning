@@ -43,9 +43,9 @@ while True:
             obj_dimensions['area'] = w*h
             print("-"*100)
             print("center x - point: " +str(vid.get(3)/2))
-            frame_xcenter = cvid.get(3)/2
+            frame_xcenter = vid.get(3)/2
             object_xcenter = x + w/2
-            steering_pos = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
+            #steering_pos = find_and_center(steering_pos,object_xcenter,frame_xcenter,s)
             break
     else:
         print("Object not detected")
