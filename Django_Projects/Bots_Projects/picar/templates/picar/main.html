@@ -130,9 +130,11 @@
 			}
 			if(this.className.indexOf("blue-grey") == -1){
 				this.className = this.className.replace("red","blue-grey");
+				camControl("stop_camera");
 			}
 			else{
 				this.className = this.className.replace("blue-grey","red");
+				camControl("start_camera")
 			}
 			
 		}
@@ -148,6 +150,21 @@
 				},
 				success: function(){
 					console.log("success");
+				}
+			});
+		}
+
+		function camControl(ctrl){
+			console.log("camera control action: ", ctrl);
+			$.ajax({
+				type: "POST",
+				url: ctrl,
+				data: {
+					'ctrl' : ctrl,
+					'csrfmiddlewaretoken' : '{{ csrf_token }}',
+				},
+				success: function(){
+					console.log("success")
 				}
 			});
 		}

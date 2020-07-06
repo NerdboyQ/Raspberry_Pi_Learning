@@ -18,6 +18,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.piCarDash, name="picar"),
-    url(r'^sanity_checks', views.piCarTests, name="piCarTests")
-    #path('sanity_checks', views.piCarTests,name="piCarTests")
+    url(r'^sanity_checks', views.piCarTests, name="piCarTests"),
+    url(r'^start_camera',views.startCam, name="startCamera"),
+    url(r'^stop_camera',views.stopCam, name="stopCamera")
 ]
