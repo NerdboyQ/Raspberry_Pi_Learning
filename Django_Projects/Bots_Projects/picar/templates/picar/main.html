@@ -15,7 +15,9 @@
 	<!-- javascript had to be placed above the css load for materialize related javascript objects to be used. -->
 	<script type="text/javascript" src="{% static 'picar/js/materialize.min.js' %}"></script>
 	<link rel="stylesheet" type="text/css" href="{% static 'picar/css/materialize.min.css' %}"/>
-	
+
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<!-- -->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -24,9 +26,9 @@
         	<div class="nav-wrapper">
       			<a href="#" class="brand-logo">PiCar - Dash</a>
       			<ul id="nav-mobile" class="right hide-on-med-and-down">
-        			<li><a href="sass.html">Sass</a></li>
-        			<li><a href="badges.html">Components</a></li>
-        			<li><a href="collapsible.html">JavaScript</a></li>
+				<li><a href="{% url 'admin:index' %}">Admin</a></li>
+        			<!--<li><a href="badges.html">Components</a></li>
+				<li><a href="collapsible.html">JavaScript</a></li>-->
       			</ul>
     		</div>
   </nav>
@@ -37,7 +39,7 @@
 	{% endblock %}
 
 	<div class="fixed-action-btn">
-		<a id="set_btn" class="btn-floating btn_large deep-purple lighten-3">
+		<a id="set_btn" class="btn-floating btn-large deep-purple lighten-1">
 			<i class="large material-icons">settings</i>
 		</a>
 		<ul id="set_ops" >
@@ -47,10 +49,29 @@
 			
 		</ul>
 	</div>
-	
+
+	<div class="container" style="padding:1%;">
+		{% block center_content %}
+
+		{% endblock %}
+	</div>
 	<!--JavaScript at end of body for optimized loading-->
         <!--script type="text/javascript" src="js/materialize.min.js"></script-->
 	<script>
+
+		var controlbuttons = [
+			document.getElementById("test_drive_btn"),
+			document.getElementById("test_steer_btn"),
+			document.getElementById("steer_left_btn"),
+			document.getElementById("steer_right_btn"),
+			document.getElementById("drive_forward_btn"),
+			document.getElementById("drive_reverse_btn"),
+			document.getElementById("drive_stop_btn"),
+			document.getElementById("speed_increase_btn"),
+			document.getElementById("speed_decrease_btn")
+		];
+		var speed_label = document.getElementById("speed_label");
+		var speed_meter = document.getElementById("speed_meter");
 		
   		document.addEventListener('DOMContentLoaded', function() {
     			var elems = document.querySelectorAll('.fixed-action-btn');
@@ -70,10 +91,43 @@
 			op.addEventListener("click",myFunction);
 
 		}
+		for(var i = 0;i<controlbuttons.length;i++){
+			var btn = controlbuttons[i];
+			btn.addEventListener("click",myFunction);
+		}
 		//ops.forEach(op => console.log(op));
  		function myFunction(){
 			console.log("option selected: ", this.id, "; ", this.className);
-		        
+		        console.log("label value: ", speed_label.innerText);
+			console.log("meter value: ",speed_meter.value);
+
+			switch(this.id){
+				case "speed_increase_btn":
+					if(speed_meter.value < 100){
+						speed_meter.value= parseInt(speed_meter.value)+10;
+						console.log("speed increased to:",speed_meter.value);
+					}	
+
+					speed_label.innerText = speed_meter.value+"%";
+					break;
+				case "speed_decrease_btn":
+					if(speed_meter.value > 0){
+						speed_meter.value= parseInt(speed_meter.value)-10;
+						console.log("speed decreased to:",speed_meter.value);
+					}
+					speed_label.innerText = speed_meter.value + "%";
+					break;
+				case "drive_stop_btn":
+					speed_meter.value = "0";
+					speed_label.innerText = speed_meter.value + "%";
+					console.log("stopping.");
+					break;
+				case "test_steer_btn":
+					runTests(this.id);
+					break;
+				default:
+					console.log("no match found.");
+			}
 			if(this.className.indexOf("blue-grey") == -1){
 				this.className = this.className.replace("red","blue-grey");
 			}
@@ -81,6 +135,21 @@
 				this.className = this.className.replace("blue-grey","red");
 			}
 			
+		}
+
+		function runTests(test){
+			console.log("running test for:", test);
+			$.ajax({
+				type: "POST",
+				url: 'sanity_checks',
+				data:{
+					'test' : test,
+					'csrfmiddlewaretoken':'{{ csrf_token }}',	
+				},
+				success: function(){
+					console.log("success");
+				}
+			});
 		}
 	</script>
 </body>

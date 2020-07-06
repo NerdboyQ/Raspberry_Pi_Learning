@@ -13,3 +13,37 @@
 <li> <a id="rst_btn" class="btn-floating waves-effect waves-light red"><i class="material-icons">autorenew</i></a></li>
 {% endblock %}
 
+{%block center_content %}
+<!--div class="row deep-purple">
+
+</div-->
+
+<div class="row deep-purple">
+	<div class="col s12 center-align deep-purple lighten-1"><b style="color:white;">CamView Placeholder</b></div>
+	<div class="video-container">
+		<iframe id="cam_frame" width="800" height="480" src="" frameborder="0"></iframe>
+	</div>
+</div>
+<div class="row">
+	<div class="col s2 offset-s5"><a id="drive_forward_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_upward</i></a></div>
+	<div class="col s2 offset-s2"><a id="speed_increase_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_drop_up</i></a></div>
+</div>
+<div class="row">
+	<div class="col s2 offset-s3"><a id="steer_left_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_back</i></a></div>
+	<div class="col s2"><a id="drive_stop_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">report</i></a></div>
+	<div class="col s2"><a id="steer_right_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_forward</i></a></div>
+	<div class="col s2 center-align"><label id="speed_label" value="0">0%</label>
+	<meter id="speed_meter" style="width:100%" low ="25" high="75" optimum="80" min="0" max="100" value="0"></meter></div>
+</div>
+<div class="row">
+	<div class="col s2 offset-s5"><a id="drive_reverse_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_downward</i></a></div>
+	<div class="col s2 offset-s2"><a id="speed_decrease_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_drop_down</i></a></div>
+</div>
+<div class="row"></div>
+<div class="row center-align deep-purple lighten-1"><b style="color:white;">PiCar Tests</b></div>
+<div class="row">
+	<div class="col s2 offset-s4"><a id="test_steer_btn"  class="waves-effect waves-light btn teal darken-3" style="width:100%;">Steer Test</a></div>
+	<div class="col s2 "><a id="test_drive_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%">Drive Test</a><div>
+</div>
+{% endblock %}
+

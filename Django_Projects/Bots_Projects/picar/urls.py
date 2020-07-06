@@ -17,5 +17,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.piCarDash),
+    url(r'^$', views.piCarDash, name="picar"),
+    url(r'^sanity_checks', views.piCarTests, name="piCarTests")
+    #path('sanity_checks', views.piCarTests,name="piCarTests")
 ]
