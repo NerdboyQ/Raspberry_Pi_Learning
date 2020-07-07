@@ -32,8 +32,7 @@
       			</ul>
     		</div>
   </nav>
-
-	
+		
 	{% block main_head %}
 
 	{% endblock %}
@@ -130,11 +129,15 @@
 			}
 			if(this.className.indexOf("blue-grey") == -1){
 				this.className = this.className.replace("red","blue-grey");
-				camControl("stop_camera");
+				if(this.id == "cam_btn"){
+					camControl("stop_camera");
+				}
 			}
 			else{
 				this.className = this.className.replace("blue-grey","red");
-				camControl("start_camera")
+				if(this.id == "cam_btn"){
+					camControl("start_camera");
+				}
 			}
 			
 		}

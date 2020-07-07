@@ -1,4 +1,5 @@
-import cv2, time, os, threading
+import cv2, time, os
+import threading
 import numpy as np
 
 vid = cv2.VideoCapture(0)

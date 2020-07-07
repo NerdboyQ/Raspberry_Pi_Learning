@@ -17,12 +17,15 @@
 <!--div class="row deep-purple">
 
 </div-->
+{% load static %}
 
 <div class="row deep-purple">
 	<div class="col s12 center-align deep-purple lighten-1"><b style="color:white;">CamView Placeholder</b></div>
-	<div class="video-container">
-		<iframe id="cam_frame" width="800" height="480" src="" frameborder="0"></iframe>
-	</div>
+	<!--div class="video-container"-->
+	<img style="max-width:100%;" src="{% static 'picar/images/test.jpg' %}" alt="test_img">
+	<img style="max-width:100%;" src="{% url 'piCamFeed' %}">
+		<!--iframe id="cam_frame" width="800" height="480" src="% static 'picar/images/test.jpg' %}" frameborder="0"></iframe-->
+	<!--/div-->
 </div>
 <div class="row">
 	<div class="col s2 offset-s5"><a id="drive_forward_btn" class="waves-effect waves-light btn teal darken-3" style="width:100%;"><i class="material-icons">arrow_upward</i></a></div>

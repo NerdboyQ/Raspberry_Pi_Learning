@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^$', views.piCarDash, name="picar"),
     url(r'^sanity_checks', views.piCarTests, name="piCarTests"),
     url(r'^start_camera',views.startCam, name="startCamera"),
-    url(r'^stop_camera',views.stopCam, name="stopCamera")
+    url(r'^stop_camera',views.stopCam, name="stopCamera"),
+    url(r'^picam_feed',views.piCamFeed, name='piCamFeed')
 ]
