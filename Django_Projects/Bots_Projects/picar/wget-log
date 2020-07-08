@@ -1,0 +1,15 @@
+--2020-07-07 19:49:57--  https://www.google.com/imgres?imgurl=https%3A%2F%2Fsanitationsolutions.net%2Fwp-content%2Fuploads%2F2015%2F05%2Fempty-image-300x200.png
+Resolving www.google.com (www.google.com)... 2607:f8b0:4000:802::2004, 172.217.12.36
+Connecting to www.google.com (www.google.com)|2607:f8b0:4000:802::2004|:443... connected.
+HTTP request sent, awaiting response... 301 Moved Permanently
+Location: https://www.google.com/imghp [following]
+--2020-07-07 19:49:57--  https://www.google.com/imghp
+Reusing existing connection to [www.google.com]:443.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: ‘imgres?imgurl=https:%2F%2Fsanitationsolutions.net%2Fwp-content%2Fuploads%2F2015%2F05%2Fempty-image-300x200.png’
+
+                 imgres?imgurl=ht     [<=>                                                        ]       0  --.-KB/s               imgres?imgurl=https:%2F%2Fsanitat     [ <=>                                                       ]   4.31K  --.-KB/s    in 0.001s  
+
+2020-07-07 19:49:57 (5.43 MB/s) - ‘imgres?imgurl=https:%2F%2Fsanitationsolutions.net%2Fwp-content%2Fuploads%2F2015%2F05%2Fempty-image-300x200.png’ saved [4417]
+

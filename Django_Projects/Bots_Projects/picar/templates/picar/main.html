@@ -58,6 +58,11 @@
         <!--script type="text/javascript" src="js/materialize.min.js"></script-->
 	<script>
 
+		$(document).ready( function(){
+			var frame = document.getElementById("camFeed_frame");
+		//	frame.src = "picar/static/picar/images/test.jpg";
+		});
+		//document.getElementById("camFeed_frame").src = "{% static 'picar/images/test.jpg' %}";
 		var controlbuttons = [
 			document.getElementById("test_drive_btn"),
 			document.getElementById("test_steer_btn"),
@@ -158,6 +163,12 @@
 		}
 
 		function camControl(ctrl){
+			if(ctrl == "stop_cam"){
+				document.getElementById("camFeed_frame").attr("src","{% static 'picar/images/test.jpg' %}");	
+			}
+			else{
+				document.getElementById("camFeed_frame").attr("src","{% url 'piCamFeed' %}");
+			}
 			console.log("camera control action: ", ctrl);
 			$.ajax({
 				type: "POST",
