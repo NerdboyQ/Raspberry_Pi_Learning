@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, StreamingHttpResponse
-from .scripts.picar.test_servo_sanity_check import * 
+from .scripts.picar.test_servo_sanity_check import *
+from .scripts.picar.test_motor_sanity_check import *
 import threading, cv2, time, imutils, datetime
 import numpy as np
 from imutils.video import VideoStream
@@ -79,8 +80,14 @@ def piCarDash(request):
     return render(request,'picar/picar_dash.html')
 
 def piCarTests(request):
-    print(request.POST.get('test'))
-    test_servo_rotation()
+    test_type = request.POST.get('test')
+    if test_type == 'test_steer_btn':
+        print(test_type)
+        test_servo_rotation()
+    elif test_type == 'test_drive_btn':
+        print(test_type)
+        test_motor_speed_and_direction()
+
     return JsonResponse({"result":"good"})
 
 def stopCam(request):

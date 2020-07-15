@@ -7,7 +7,7 @@ def test_servo_rotation():
     print(vars(s))
     print("max_angle: " +str(s.max_angle))
     print("slope: " +str(s.slope))
-    for i in range(0,3):
+    for i in range(0,2):
         s.steer(s.max_angle)
         print("turning left")
         time.sleep(0.5)
@@ -17,7 +17,7 @@ def test_servo_rotation():
         time.sleep(0.5)
         print("turning right")
     
-    for i in range(0,3):
+    for i in range(0,1):
         s.steer(s.max_angle)
         time.sleep(0.5)
         print("Return to center")

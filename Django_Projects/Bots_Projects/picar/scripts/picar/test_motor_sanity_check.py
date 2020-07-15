@@ -18,4 +18,4 @@ def test_motor_speed_and_direction():
     d.stop_vehicle()
     d.kill_motor()
 
-test_motor_speed_and_direction()
+#test_motor_speed_and_direction()

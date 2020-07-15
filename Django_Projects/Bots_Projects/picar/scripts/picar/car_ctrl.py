@@ -1,15 +1,13 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-GPIO.setmode(GPIO.BOARD)
-
-
 
 ##~ For property setter methods to work, the class must inherent the 'object' class
 ##~ NOTE: This class is still in development
 class driver(object):
-
+    
     def __init__(self):
+        GPIO.setmode(GPIO.BOARD)
         self._frequency = 50
         self._cur_dutyCycle = .18
         self._min_dutyCycle = .18
@@ -122,6 +120,7 @@ class driver(object):
 class servo(object):
 
     def __init__(self):
+        GPIO.setmode(GPIO.BOARD)
         self._frequency = 60
         self._max_angle = 210                                       ##~Full right position/angle
         self._min_angle = 0                                         ##~Full left position/angle
