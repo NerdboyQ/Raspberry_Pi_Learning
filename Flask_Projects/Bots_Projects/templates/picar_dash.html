@@ -1,7 +1,7 @@
 <!-- This file extends from the main.html template in this same directory. -->
 <!-- Below the file is referenced as the parent to extend from using the path and filename as a string-->
 <!-- The specific block to reference has to be explicitly called as well -->
-{% extends 'picar/main.html' %}
+{% extends 'main.html' %}
 
 {% block main_head %}
 
@@ -17,14 +17,14 @@
 <!--div class="row deep-purple">
 
 </div-->
-{% load static %}
+
 
 <div class="row deep-purple">
 	<div class="col s12 center-align deep-purple lighten-1"><b style="color:white;">CamView Placeholder</b></div>
 	<!--div class="video-container"-->
-	<!--img id="camFeed_frame" style="max-width:100%;texxt-align:center;" src="{% static 'picar/images/empty.jpg' %}" class="center"-->	
-	<img id="camFeed_frame" style="max-width:100%;" src="{% url 'piCamFeed' %}">
-		<!--iframe id="cam_frame" width="800" height="480" src="% static 'picar/images/test.jpg' %}" frameborder="0"></iframe-->
+	<!--img id="camFeed_frame" style="max-width:100%;texxt-align:center;" src="" class="center"-->	
+	<img id="camFeed_frame" style="max-width:100%;" src="">
+		<!--iframe id="cam_frame" width="800" height="480" src="" frameborder="0"></iframe-->
 	<!--/div-->
 </div>
 <div class="row">
