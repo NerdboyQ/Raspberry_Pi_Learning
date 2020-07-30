@@ -76,12 +76,12 @@
 		var speed_label = document.getElementById("speed_label");
 		var speed_meter = document.getElementById("speed_meter");
 		
-  		document.addEventListener('DOMContentLoaded', function() {
-    			var elems = document.querySelectorAll('.fixed-action-btn');
+  		document.addEventListener("DOMContentLoaded", function() {
+    			var elems = document.querySelectorAll(".fixed-action-btn");
 			var instances = M.FloatingActionButton.init(elems, {
 			hoverEnabled: false
 			}); 
-			//options is in the documentation for materialize, but it had to be removed due to an error for 'options not defined'
+			//options is in the documentation for materialize, but it had to be removed due to an error for "options not defined"
 			console.log(instances);
   		});
 
@@ -153,10 +153,10 @@
 			console.log("running test for:", test);
 			$.ajax({
 				type: "POST",
-				url: 'sanity_checks',
+				url: "sanity_checks",
 				data:{
-					'test' : test,
-					'csrfmiddlewaretoken':'{{ csrf_token }}',	
+					"test" : test,
+					"csrfmiddlewaretoken":"{{ csrf_token }}",	
 				},
 				success: function(){
 					console.log("success");
@@ -176,8 +176,8 @@
 				type: "POST",
 				url: ctrl,
 				data: {
-					'ctrl' : ctrl,
-					'csrfmiddlewaretoken' : '{{ csrf_token }}',
+					"ctrl" : ctrl,
+					"csrfmiddlewaretoken" : "{{ csrf_token }}",
 				},
 				success: function(){
 					console.log("success")
