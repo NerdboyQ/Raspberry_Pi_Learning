@@ -8,4 +8,5 @@ def index():
     return render_template('picar_dash.html')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # adding host '0.0.0.0' & a port, this can serve as a local network server when running.
+    app.run(host="0.0.0.0",port=81,debug=True)
