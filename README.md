@@ -64,7 +64,7 @@ _Install the Desktop version w/ the suggested software (the largest download)_
 >   **ONLY IF YOU DO NOT HAVE PYTHON 3 INSTALLED ALREADY:**
 ```
    sudo apt-get install python3-dev
-   sudo pip3 install opencv-python
+   sudo pip3 install opencv-contrib-python==4.1.0.25
    sudo pip3 install numpy
 ```
 >  _(If this doesn't work, it's probably already installed.)_
