@@ -80,15 +80,34 @@ uint64_t set_nth_bit(uint64_t val, uint16_t bit_pos){
 	return val;
 }
 
+uint64_t tgl_nth_bit(uint64_t val, uint16_t bit_pos){
+	/**
+	* Toggles the bit in the provided value at the target bit position
+	* using bitwise operators.
+	*
+	* @param val : address to manipulate.
+	* @param bit_pos : bit position to toggle.
+	*/
+	
+	uint64_t adjust_bitset = (1 << bit_pos); // The << shifts a 1 to the left a number of bit positions, then NOT the bits.
+	cout << "tgl adjust_bitset: "  << bitset<16>(adjust_bitset) << endl; 
+	val = val ^ adjust_bitset; // We XOR the value provided with the adjust_bitset forcing it to a 0 value.
+	return val;
+}
+
 uint64_t old_addr = 0xA5A5;
 
 int main(){
 	fibonacci_sequence(100);
 	uint64_t set_addr = set_nth_bit(old_addr, 1);
 	uint64_t clr_addr = clr_nth_bit(old_addr, 0);
+	uint64_t tgl_addr_1 = tgl_nth_bit(old_addr, 0);
+	uint64_t tgl_addr_2 = tgl_nth_bit(tgl_addr_1, 0);
 	cout << "old: " << hex << old_addr <<  ", " << bitset<16>(old_addr) << endl; 
 	cout << "set: " << hex << set_addr <<  ", " << bitset<16>(set_addr) << endl; 
 	cout << "clr: " << hex << clr_addr <<  ", " << bitset<16>(clr_addr) << endl; 
+	cout << "tgl: " << hex << tgl_addr_1 <<  ", " << bitset<16>(tgl_addr_1) << endl; 
+	cout << "tgl: " << hex << tgl_addr_2 <<  ", " << bitset<16>(tgl_addr_2) << endl; 
 	cout << get_nth_bit(old_addr, 5) << endl;
 	return 0;
 }
