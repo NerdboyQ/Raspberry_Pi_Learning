@@ -35,6 +35,21 @@ void fibonacci_sequence(uint16_t max){
 	cout << endl << endl;
 }
 
+void pointer_example(){
+	/**
+	* Provides example of how to assign and de-reference a pointer.
+	* A pointer points to a specific address in memory. 
+	*
+	*/
+
+	uint16_t var = 50;
+	uint16_t *p;
+	p = &var;
+	cout << "pointer address:\t\t\t" << p << endl;
+	cout << "value of variable:\t\t\t" << dec << var << endl;
+	cout << "value in pointer's address:\t" << dec << *p << endl;
+}
+
 uint64_t clr_nth_bit(uint64_t val, uint16_t bit_pos){
 	/**
 	* Clears the bit in the provided value at the target bit position
@@ -62,6 +77,7 @@ uint16_t get_nth_bit(uint64_t val, uint16_t bit_pos){
 	val = (val >> bit_pos); // We use the >> bitwise operator to shift the value to the right until the target bit is furthest to the right.
 	cout << "get adjusted bitset: " << bitset<16>(val) << endl;
 	uint16_t bit =  val & 1; // We then AND it with a 1 to get the target bit we shifted to the right in the previous step.
+	cout << "The bit in the " << bit_pos << " position of the address is: " << bit << endl;
 	return bit;
 }
 
@@ -95,19 +111,42 @@ uint64_t tgl_nth_bit(uint64_t val, uint16_t bit_pos){
 	return val;
 }
 
+void increment_operator_comparisons(){
+	/** 
+	* Illustrates the differences in ++value vs value++
+	*
+	*
+	*/
+
+	int a = 1;
+	int b = 1;
+	int j = ++a; // increments a and returns the incremented value to assign for j
+	int k = b++; // increments b but returns the original b value to assign for k
+	cout << "a: " << a << ", j: " << j << endl;
+	cout << "b: " << b << ", k: " << k << endl;
+}
+
 uint64_t old_addr = 0xA5A5;
 
 int main(){
+	cout << "==============================================================" << endl << endl;
 	fibonacci_sequence(100);
+	cout  << endl << "==============================================================" << endl << endl;
 	uint64_t set_addr = set_nth_bit(old_addr, 1);
 	uint64_t clr_addr = clr_nth_bit(old_addr, 0);
 	uint64_t tgl_addr_1 = tgl_nth_bit(old_addr, 0);
 	uint64_t tgl_addr_2 = tgl_nth_bit(tgl_addr_1, 0);
-	cout << "old: " << hex << old_addr <<  ", " << bitset<16>(old_addr) << endl; 
+	cout << endl << "old: " << hex << old_addr <<  ", " << bitset<16>(old_addr) << endl; 
 	cout << "set: " << hex << set_addr <<  ", " << bitset<16>(set_addr) << endl; 
-	cout << "clr: " << hex << clr_addr <<  ", " << bitset<16>(clr_addr) << endl; 
-	cout << "tgl: " << hex << tgl_addr_1 <<  ", " << bitset<16>(tgl_addr_1) << endl; 
-	cout << "tgl: " << hex << tgl_addr_2 <<  ", " << bitset<16>(tgl_addr_2) << endl; 
-	cout << get_nth_bit(old_addr, 5) << endl;
+	cout << "clr: " << hex << clr_addr <<  ", " << bitset<16>(clr_addr) << endl << endl; 
+	cout << "tgl: " << hex << tgl_addr_1 <<  ", " << bitset<16>(tgl_addr_1) << endl << endl; 
+	cout << "tgl: " << hex << tgl_addr_2 <<  ", " << bitset<16>(tgl_addr_2) << endl << endl; 
+
+	get_nth_bit(old_addr, 5);
+	cout  << endl << "==============================================================" << endl << endl;
+	increment_operator_comparisons();
+	cout  << endl << "==============================================================" << endl << endl;
+	pointer_example();
+	cout  << endl << "==============================================================" << endl << endl;
 	return 0;
 }
