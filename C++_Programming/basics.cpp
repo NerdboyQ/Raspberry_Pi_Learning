@@ -1,7 +1,72 @@
 #include <iostream>
 #include <bitset>
+#include <cstring>
 
 using namespace std;
+
+class BitManipulator
+{
+	public :
+		uint32_t address;
+
+		BitManipulator(uint32_t addr)
+		{
+			this -> address = addr;
+			cout << "The user provided the following address: 0x" << hex << address << endl;
+			cout << "The bit representation of the address is: " << bitset<16>(address) << endl;
+			get_nth_bit(3);
+			toggle_nth_bit(2);
+			set_nth_bit(4);
+			clear_nth_bit(3);
+		}
+
+		void get_nth_bit(uint16_t bit_position)
+		{
+			// Shifts the address to the right to make the target bit the first bit (bit 0)
+			// then use the AND operator to mask all other bits with 0's, only returning bit 0
+			uint16_t nth_bit = (address >> bit_position) & 0x1;
+			cout << endl << "The bit found at bit position " << bit_position << " is: " << nth_bit << endl;
+		}
+
+		void set_nth_bit(uint16_t bit_position)
+		{
+			// Shifts a single bit, 1, to the target bit position to mask/ignore all other bit positions
+			// then the OR operator is used to force the value to a 1.
+			uint32_t new_address = (0x1 << bit_position) | address;
+			cout << endl << "Setting bit at position: " << bit_position << endl;
+			cout << "old: " << bitset<16>(address) << endl;
+			cout << "new: " << bitset<16>(new_address) << endl;
+		}
+
+		void clear_nth_bit(uint16_t bit_position)
+		{
+			// Shifts a single bit, 1, to the left until the 1 is in the target bit position 
+			// and use the NOT operator to get the inverse of all the bits e.g. 000100 -> 111011
+			// then the AND operator is used with the inverse address and the address to force the
+			// target bit position to a 0. 
+			uint32_t new_address = ~(1 << bit_position) & address;
+			cout << endl << "Clearing bit at position: " << bit_position << endl;
+			cout << "old: " << bitset<16>(address) << endl;
+			cout << "new: " << bitset<16>(new_address) << endl;
+		}
+
+		void toggle_nth_bit(uint16_t bit_position)
+		{
+			// Shifts a single bit 1 to the left until the 1 is in the target bit position
+			// then the XOR operator is used with the single bit and the address to force the 
+			// target bit position to flip to it's oposite value. 1->0 or 0->1
+			uint32_t new_address = (0x1 << bit_position) ^ address;
+			cout << "toggle 1" << endl;
+			cout << "old: " << bitset<16>(address) << endl;
+			cout << "new: " << bitset<16>(new_address) << endl;
+
+			cout << "toggle 2" << endl;
+			cout << "old: " << bitset<16>(new_address) << endl;
+			new_address = (0x1 << bit_position) ^ new_address;
+			cout << "new: " << bitset<16>(new_address) << endl;
+		}
+
+};
 
 void fibonacci_sequence(uint16_t max){
 	/**
@@ -50,67 +115,6 @@ void pointer_example(){
 	cout << "value in pointer's address:\t" << dec << *p << endl;
 }
 
-uint64_t clr_nth_bit(uint64_t val, uint16_t bit_pos){
-	/**
-	* Clears the bit in the provided value at the target bit position
-	* using bitwise operators.
-	*
-	* @param val : address to manipulate.
-	* @param bit_pos : bit position to clear.
-	*/
-	
-	uint64_t adjust_bitset = ~(1 << bit_pos); // The << shifts a 1 to the left a number of bit positions, then NOT the bits.
-	cout << "clr adjust_bitset: "  << bitset<16>(adjust_bitset) << endl; 
-	val = val & adjust_bitset; // We AND the value provided with the adjust_bitset forcing it to a 0 value.
-	return val;
-}
-
-uint16_t get_nth_bit(uint64_t val, uint16_t bit_pos){
-	/**
-	* Gets the bit in the provided value at the target bit position
-	* using bitwise operators.
-	*
-	* @param val : address to manipulate.
-	* @param bit_pos : bit position to grab.
-	*/
-
-	val = (val >> bit_pos); // We use the >> bitwise operator to shift the value to the right until the target bit is furthest to the right.
-	cout << "get adjusted bitset: " << bitset<16>(val) << endl;
-	uint16_t bit =  val & 1; // We then AND it with a 1 to get the target bit we shifted to the right in the previous step.
-	cout << "The bit in the " << bit_pos << " position of the address is: " << bit << endl;
-	return bit;
-}
-
-uint64_t set_nth_bit(uint64_t val, uint16_t bit_pos){
-	/**
-	* Sets the bit in the provided value at the target bit position
-	* using bitwise operators.
-	*
-	* @param val : address to manipulate.
-	* @param bit_pos : bit position to set.
-	*/
-	
-	uint64_t adjust_bitset = (1 << bit_pos); // The << shifts a 1 to the left a number of bit positions.
-	cout << "set adjust_bitset: "  << bitset<16>(adjust_bitset) << endl;
-	val = val | adjust_bitset; // We OR the bit at a position with a 1 forcing it to a 1 value.
-	return val;
-}
-
-uint64_t tgl_nth_bit(uint64_t val, uint16_t bit_pos){
-	/**
-	* Toggles the bit in the provided value at the target bit position
-	* using bitwise operators.
-	*
-	* @param val : address to manipulate.
-	* @param bit_pos : bit position to toggle.
-	*/
-	
-	uint64_t adjust_bitset = (1 << bit_pos); // The << shifts a 1 to the left a number of bit positions, then NOT the bits.
-	cout << "tgl adjust_bitset: "  << bitset<16>(adjust_bitset) << endl; 
-	val = val ^ adjust_bitset; // We XOR the value provided with the adjust_bitset forcing it to a 0 value.
-	return val;
-}
-
 void increment_operator_comparisons(){
 	/** 
 	* Illustrates the differences in ++value vs value++
@@ -126,27 +130,13 @@ void increment_operator_comparisons(){
 	cout << "b: " << b << ", k: " << k << endl;
 }
 
-uint64_t old_addr = 0xA5A5;
-
 int main(){
 	cout << "==============================================================" << endl << endl;
 	fibonacci_sequence(100);
-	cout  << endl << "==============================================================" << endl << endl;
-	uint64_t set_addr = set_nth_bit(old_addr, 1);
-	uint64_t clr_addr = clr_nth_bit(old_addr, 0);
-	uint64_t tgl_addr_1 = tgl_nth_bit(old_addr, 0);
-	uint64_t tgl_addr_2 = tgl_nth_bit(tgl_addr_1, 0);
-	cout << endl << "old: " << hex << old_addr <<  ", " << bitset<16>(old_addr) << endl; 
-	cout << "set: " << hex << set_addr <<  ", " << bitset<16>(set_addr) << endl; 
-	cout << "clr: " << hex << clr_addr <<  ", " << bitset<16>(clr_addr) << endl << endl; 
-	cout << "tgl: " << hex << tgl_addr_1 <<  ", " << bitset<16>(tgl_addr_1) << endl << endl; 
-	cout << "tgl: " << hex << tgl_addr_2 <<  ", " << bitset<16>(tgl_addr_2) << endl << endl; 
-
-	get_nth_bit(old_addr, 5);
-	cout  << endl << "==============================================================" << endl << endl;
+	cout << "==============================================================" << endl << endl;
 	increment_operator_comparisons();
 	cout  << endl << "==============================================================" << endl << endl;
-	pointer_example();
-	cout  << endl << "==============================================================" << endl << endl;
+	BitManipulator bitManipulator = BitManipulator(0x1F2F3F4F);
+
 	return 0;
 }
