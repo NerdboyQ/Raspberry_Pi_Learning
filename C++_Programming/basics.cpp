@@ -68,6 +68,40 @@ class BitManipulator
 
 };
 
+class LinkedListExample
+{
+	class Node 
+	{
+	public:
+		int data;
+	Node *next;
+	};
+public:
+
+	LinkedListExample()
+	{
+		Node * head = NULL;
+		Node * second = NULL;
+		Node * third = NULL;
+
+		head = new Node();
+		second = new Node();
+		third = new Node();
+
+		head->data = 1;
+		head->next = second;
+
+		second->data = 2;
+		second->next = third;
+
+		third->data = 3;
+		third->next = NULL;
+		cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
+	}
+	
+
+};
+
 void fibonacci_sequence(uint16_t max){
 	/**
 	* Displays the Fibonacci sequence until the max value is reached.
@@ -137,6 +171,7 @@ int main(){
 	increment_operator_comparisons();
 	cout  << endl << "==============================================================" << endl << endl;
 	BitManipulator bitManipulator = BitManipulator(0x1F2F3F4F);
-
+	cout  << endl << "==============================================================" << endl << endl;
+	LinkedListExample();
 	return 0;
 }
