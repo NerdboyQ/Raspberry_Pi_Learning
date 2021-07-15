@@ -70,37 +70,90 @@ class BitManipulator
 
 class LinkedListExample
 {
-	class Node 
-	{
-	public:
-		int data;
-	Node *next;
-	};
-public:
-
-	LinkedListExample()
-	{
-		Node * head = NULL;
-		Node * second = NULL;
-		Node * third = NULL;
-
-		head = new Node();
-		second = new Node();
-		third = new Node();
-
-		head->data = 1;
-		head->next = second;
-
-		second->data = 2;
-		second->next = third;
-
-		third->data = 3;
-		third->next = NULL;
-		cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
-	}
 	
 
+	class SinglyLinkedList
+	{
+		// Singly Linked List
+		class Node 
+		{
+		public:
+			int data;
+			Node *next;
+		};
+		
+	public:
+
+		SinglyLinkedList()
+		{
+			Node * head = NULL;
+			Node * second = NULL;
+			Node * third = NULL;
+
+			head = new Node();
+			second = new Node();
+			third = new Node();
+
+			head->data = 1;
+			head->next = second;
+
+			second->data = 2;
+			second->next = third;
+
+			third->data = 3;
+			third->next = NULL;
+			cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
+		}
+		
+
+	};
+
+	class DoublyLinkedList
+	{
+
+		// Doubly Linked List
+		class Node 
+		{
+		public:
+			int data;
+			Node *previous;
+			Node *next;
+		};
+	public:
+
+		DoublyLinkedList()
+		{
+			Node * head = NULL;
+			Node * second = NULL;
+			Node * third = NULL;
+
+			head = new Node();
+			second = new Node();
+			third = new Node();
+
+			head->data = 1;
+			head->next = second;
+			head->previous = NULL;
+
+			second->data = 2;
+			second->next = third;
+			second->previous = head;
+
+			third->data = 3;
+			third->next = NULL;
+			third->previous = second;
+			cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
+		}
+
+	};
+public:
+	LinkedListExample(){
+		SinglyLinkedList();
+		DoublyLinkedList();
+	}
 };
+
+
 
 void fibonacci_sequence(uint16_t max){
 	/**
