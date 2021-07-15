@@ -82,10 +82,29 @@ class LinkedListExample
 			Node *next;
 		};
 		
+		void print_linked_list_singly(Node *linked_list)
+		{
+			Node *holder = linked_list;
+			while (holder != NULL)
+			{
+				if (holder->next != NULL)
+				{
+					cout << holder->data << "->";
+				} 
+				else
+				{
+					cout << holder->data << endl;
+				}
+				
+				holder = holder->next;
+			}
+			cout << endl;
+		}
 	public:
 
 		SinglyLinkedList()
 		{
+			cout << "Singly Linked List: " << endl;
 			Node * head = NULL;
 			Node * second = NULL;
 			Node * third = NULL;
@@ -102,7 +121,8 @@ class LinkedListExample
 
 			third->data = 3;
 			third->next = NULL;
-			cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
+			print_linked_list_singly(head);
+			//cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
 		}
 		
 
@@ -119,10 +139,50 @@ class LinkedListExample
 			Node *previous;
 			Node *next;
 		};
+		void print_linked_list_doubly(Node *linked_list)
+		{
+			Node *holder = linked_list;
+			Node *prev;
+			// printing nodes from head -> tail using next.
+			while (holder != NULL)
+			{
+				if (holder->next != NULL)
+				{
+					cout << holder->data << "->";
+				} 
+				else
+				{
+					cout << holder->data << endl;
+				}
+				
+				if (holder->next == NULL)
+				{
+					prev = holder;
+				}
+				holder = holder->next;
+			} 
+
+			holder = prev;
+			// printing nodes from tail -> head using previous.
+			while (holder != NULL)
+			{
+				if (holder->previous != NULL)
+				{
+					cout << holder->data << "<-";
+				} 
+				else
+				{
+					cout << holder->data << endl;
+				}
+				
+				holder = holder->previous;
+			} 
+		}
 	public:
 
 		DoublyLinkedList()
 		{
+			cout << "Doubly Linked List: " << endl;
 			Node * head = NULL;
 			Node * second = NULL;
 			Node * third = NULL;
@@ -142,7 +202,8 @@ class LinkedListExample
 			third->data = 3;
 			third->next = NULL;
 			third->previous = second;
-			cout << "Head: " << head->data << ", Second: " << second->data << ", Third: " << third->data << endl;
+
+			print_linked_list_doubly(head);
 		}
 
 	};
