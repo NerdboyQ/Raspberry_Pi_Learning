@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!--Load Jquery api support-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body style="background-color:#263238;">
+    <div class="container l8 offset-l2">
+        <div class="row l8 offset-l2">
+            <div class="col s12 l8 offset-l2 center-align deep-purple lighten-1"><b style="color:white;">CamView</b></div>
+            <!--div class="video-container"-->
+            <!--img id="camFeed_frame" style="max-width:100%;texxt-align:center;" src="" class="center"-->	
+            <img id="camFeed_frame l8" style="max-width:100%;margin:auto;display:block;" src="{{ url_for('streamVideo') }}">
+                <!--iframe id="cam_frame" width="800" height="480" src="" frameborder="0"></iframe-->
+            <!--/div-->
+        </div>
+        <div class="row s12">
+            <div class="col s1 offset-s3 l1 offset-l4" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="rotate_left_btn"><i class="material-icons">rotate_left</i>
+                </a></div>
+            <div class="col s1 offset-s3 l1 offset-l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="rotate_right_btn"><i class="material-icons">rotate_right</i>
+                </a></div>
+        </div>
+
+        <div class="row s12">
+            <div class="col s1 offset-s3 l1 offset-l4" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="diagonal_F_left_btn"><i class="material-icons" style="transform: rotate(270deg);">call_made</i>
+                </a></div>
+            <div class="col s1 offset-s1 l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="drive_F_btn"><i class="material-icons">arrow_upward</i>
+                </a></div>
+            <div class="col s1 offset-s1 l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="diagonal_F_right_btn"><i class="material-icons">call_made</i>
+                </a></div>
+        </div>
+        <div class="row s12">
+            <div class="col s1 offset-s3 l1 offset-l4" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="drive_left_btn"><i class="material-icons">arrow_back</i>
+                </a></div>
+            <div class="col s1 offset-s1 l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="stop_btn"><i class="material-icons">cancel</i>
+                </a></div>
+            <div class="col s1 offset-s1 l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="drive_right_btn"><i class="material-icons">arrow_forward</i>
+                </a></div>
+        </div>
+        <div class="row s12">
+            <div class="col s1 offset-s3 l1 offset-l4" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="diagonal_R_left_btn"><i class="material-icons">call_received</i>
+                </a></div>
+            <div class="col s1 offset-s1 l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="drive_R_btn"><i class="material-icons">arrow_downward</i>
+                </a></div>
+            <div class="col s1 offset-s1 l1" style="text-align:center">
+                <a class="waves-effect waves-light btn" id="diagonal_R_right_btn"><i class="material-icons" style="transform: rotate(90deg);">call_made</i>
+                </a></div>
+        </div>
+    </div>
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src= {{ url_for('static', filename='js/OraIV_Controls.js') }} ></script>
+  </body>
+</html>
