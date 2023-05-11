@@ -1,0 +1,10 @@
+Flask==2.1.1
+Flask-Login==0.6.0
+Flask-SQLAlchemy==2.5.1
+imutils==0.5.4
+Jinja2==3.1.1
+numpy==1.22.3
+opencv-python==4.7.0.68
+pandas==1.4.2
+SQLAlchemy==1.4.35
+tflite-support==0.1.0a1
