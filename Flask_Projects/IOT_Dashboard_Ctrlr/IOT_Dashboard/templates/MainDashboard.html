@@ -11,14 +11,18 @@
     <!--Load Jquery api support-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <!-- Custom CSS -->
+    <link rel="stylsheet" href="{{ url_for('static', filename='css/custom_objects.css') }}">
+
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
   <body style="background-color:#263238;">
+      <a class="waves-effect waves-light btn bt_btn green" id="bt_scan_btn">Scan for BT devices</button>
 
       <!--JavaScript at end of body for optimized loading-->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-      <!--script src= {{ url_for('static', filename='js/OraIV_Controls.js') }} ></script-->
+      <script src= {{ url_for('static', filename='js/dashboard_ctrls.js') }} ></script>
     
   </body>
 </html>
