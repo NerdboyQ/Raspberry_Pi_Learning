@@ -9,3 +9,5 @@ app = Flask(__name__)
 # Uses __init__.py file for app configuration
 #app.config.from_object('config')
 #db = SQLAlchemy(app)
+
+from IOT_Dashboard import views
