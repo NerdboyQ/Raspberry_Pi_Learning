@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-
-	<meta charset="utf-8">
-	<title>IOT Dashboard</title>
+	  <meta charset="utf-8">
+	  <title>IOT Dashboard</title>
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
@@ -17,12 +16,34 @@
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
+  
   <body style="background-color:#263238;">
+    
+    <ul>
+      <li id="btDev_0" class="btDevRow">Dev 0</li>
+      <li id="btDev_1" class="btDevRow">Dev 1</li>
+      <li id="btDev_2" class="btDevRow">Dev 2</li>
+      <li id="btDev_3" class="btDevRow">Dev 3</li>
+      <li id="btDev_4" class="btDevRow">Dev 4</li>
+    </ul>
+    <div>
       <a class="waves-effect waves-light btn bt_btn green" id="bt_scan_btn">Scan for BT devices</button>
+      
+      <nav class="bt_device_table">
+        <ul>
+            <li id="btDev_0" class="btDevRow">Dev 0</li>
+            <li id="btDev_1" class="btDevRow">Dev 1</li>
+            <li id="btDev_2" class="btDevRow">Dev 2</li>
+            <li id="btDev_3" class="btDevRow">Dev 3</li>
+            <li id="btDev_4" class="btDevRow">Dev 4</li>
+        </ul>
+      </nav>
+    </div>
 
-      <!--JavaScript at end of body for optimized loading-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-      <script src= {{ url_for('static', filename='js/dashboard_ctrls.js') }} ></script>
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src= {{ url_for('static', filename='js/dashboard_ctrls.js') }} ></script>
     
   </body>
 </html>

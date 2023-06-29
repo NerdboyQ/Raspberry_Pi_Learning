@@ -1,4 +1,18 @@
 .bt_btn {
    width: 10%;
-   height: 200px;   
+   height: 200px;  
+   border-radius: 10px; 
+}
+
+.btDevRow {
+   background-color: white;
+   color: white;
+}
+
+.bt_device_table {
+   width: 25%;
+   height: 25%;
+   overflow: hidden;
+   overflow-y: scroll;
+   background-color: #FFFFFF;
 }
