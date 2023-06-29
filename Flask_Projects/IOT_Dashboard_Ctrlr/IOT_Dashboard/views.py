@@ -13,6 +13,11 @@ def render_homepage():
 @app.route("/bt_scan")
 def scan_for_bt_devices():
     print("[views.py] calling bt scan")
-    run_bt_scanner()
+    bt_devices = run_bt_scanner()
     print("[view.py] finished bt scan")
-    return jsonify({"status":"good"})
+    scan_results = []
+
+    for dev in bt_devices:
+        scan_results.append(vars(dev))
+
+    return jsonify({"status":"good", "bt_devices": scan_results})
