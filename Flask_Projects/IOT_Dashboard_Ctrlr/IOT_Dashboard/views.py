@@ -1,3 +1,4 @@
+import os, sys
 from flask import render_template, jsonify, url_for, Response, stream_with_context
 from IOT_Dashboard import app
 from IOT_Dashboard.scripts.bt_ctrlr import * 
@@ -9,6 +10,13 @@ def render_homepage():
 	"""
 
 	return render_template("MainDashboard.html")
+
+@app.route("/bt_rst")
+def reset_bluetooth():
+    print("Resetting Bluetooth Service...")
+    os.system("sudo systemctl restart bluetooth")
+    return jsonify({"status" : "reset complete"})
+
 
 @app.route("/bt_scan")
 def scan_for_bt_devices():
