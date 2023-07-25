@@ -1,5 +1,5 @@
 import asyncio, bluetooth
-from bleak import BleakScanner
+from bleak import BleakClient, BleakScanner
 #from bluetooth.ble import DiscoveryService # not working yet
 
 class BT_Device:
@@ -7,6 +7,24 @@ class BT_Device:
         self.name = name
         self.addr = addr
         self.isBLE = isBLE
+        self.client = None
+
+    def connect(self):
+        if not self.isBLE:
+            print(f"connectin non-ble device: {self.addr}")
+
+        elif self.isBLE:
+            print(f"connect ble device: {self.addr}")
+
+    def pair_NonBLE(self):
+        self.client = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+        self.client.connect(self.addr)
+        print("Connected!")
+
+    def disconnect(self):
+        self.client.disconnect()
+
+
         
 #def scan_for_BLE_devices():
 #    service = DiscoveryService()

@@ -30,9 +30,30 @@ function scan_for_bt_devices(){
 			li.setAttribute("id", "btDev_" + c);
 			li.setAttribute("class", "btDevRow");
 			bt_device_list.appendChild(li);
+			var _btBtn = document.createElement("a");
+			_btBtn.setAttribute("class", "btn");
+			_btBtn.setAttribute("id", "btConnectBtn");
+			var _btIcon = document.createElement("i");
+			_btIcon.setAttribute("class", "material-icons");
 			li.appendChild(textNode);
+			li.appendChild(_btBtn);
+			_btIcon.appendChild(document.createTextNode("bluetooth"));
+			_btBtn.appendChild(_btIcon);
+			_btBtn.setAttribute("style", "{border-radius:50%}");
+			_btBtn.setAttribute("id", json["bt_devices"][i]["name"]);
+			_btBtn.addEventListener("click", bt_connect);
 			console.log(json["bt_devices"][i]);
 			c+=1;
 		}
+	});
+}
+
+function bt_connect(){
+	console.log("attempting bt connect for " + this.id);
+	fetch('/bt_connect/' + this.id)
+	.then(function (response) {
+		return response.json();
+	}).then (function (json){
+		console.log(json);
 	});
 }
