@@ -1,6 +1,9 @@
-import asyncio, bluetooth
+import asyncio, bluetooth, pexpect, sys, time
 from bleak import BleakClient, BleakScanner
 #from bluetooth.ble import DiscoveryService # not working yet
+
+BT_CLASSIC_PIN="1887"
+
 
 class BT_Device:
     def __init__ (self, name, addr, isBLE):
@@ -11,14 +14,30 @@ class BT_Device:
 
     def connect(self):
         if not self.isBLE:
+            self.pair_NonBLE()
             print(f"connectin non-ble device: {self.addr}")
 
         elif self.isBLE:
             print(f"connect ble device: {self.addr}")
 
     def pair_NonBLE(self):
+        analyzer = pexpect.spawn(command='bluetoothctl', encoding='utf-8')
+        analyzer.expect("# ")
+        print(analyzer.before)
+
+        for cmd in ['scan on', 'scan off',f"pair {self.addr}", BT_CLASSIC_PIN, 'exit']:
+            print(f"Trying {cmd}...")
+            analyzer.sendline(cmd)
+            print(analyzer.before)
+            stop_time = time.time() + 10
+            while time.time() < stop_time:
+                time.sleep(1)
+            analyzer.expect('# ')
+
         self.client = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        self.client.connect(self.addr)
+        self.client.connect((self.addr, 1))
+        msg = []
+        self.client.send(bytes([int('af', 16)]))
         print("Connected!")
 
     def disconnect(self):
