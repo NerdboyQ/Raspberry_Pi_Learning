@@ -14,8 +14,10 @@ function reset_bt(){
         console.log(json);
     });
 }
-function scan_for_bt_devices(){
+function scan_for_bt_devices() {
+	bt_rst_btn.firstChild.textContent = 'bluetooth_searching';
 	console.log("Scanning for bt devices...");
+	bt_device_list.innerHTML = '<div class=\'loader\'></div>';
 	fetch('/bt_scan')
 	.then(function (response) {
 		return response.json();
@@ -31,20 +33,22 @@ function scan_for_bt_devices(){
 			li.setAttribute("class", "btDevRow");
 			bt_device_list.appendChild(li);
 			var _btBtn = document.createElement("a");
-			_btBtn.setAttribute("class", "btn");
+			_btBtn.setAttribute("class", "btn btCtl");
 			_btBtn.setAttribute("id", "btConnectBtn");
 			var _btIcon = document.createElement("i");
 			_btIcon.setAttribute("class", "material-icons");
 			li.appendChild(textNode);
 			li.appendChild(_btBtn);
-			_btIcon.appendChild(document.createTextNode("bluetooth"));
+			_btIcon.appendChild(document.createTextNode("bluetooth_disabled"));
 			_btBtn.appendChild(_btIcon);
-			_btBtn.setAttribute("style", "{border-radius:50%}");
+			_btBtn.setAttribute("style", "margin-left:auto;margin-right:0;");
 			_btBtn.setAttribute("id", json["bt_devices"][i]["name"]);
 			_btBtn.addEventListener("click", bt_connect);
 			console.log(json["bt_devices"][i]);
 			c+=1;
 		}
+
+		bt_rst_btn.firstChild.textContent = 'settings_bluetooth'; 	
 	});
 }
 

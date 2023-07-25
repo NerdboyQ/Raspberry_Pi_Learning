@@ -20,17 +20,25 @@
   <body>
     <div> 
         <a class="waves-effect waves-light btn bt_btn green" id="bt_scan_btn">Scan for BT devices</a>
-	<a class="waves-effect waves-light btn bt_rst blue" id="bt_rst_btn"><i class="material-icons">settings_bluetooth</i></a>
+	<a class="waves-effect waves-light btn bt_rst blue" id="bt_rst_btn"><i id="btStatus" class="material-icons">settings_bluetooth</i></a>
     </div>
     <div class="bt_device_table">  
         <ul id="bt_device_list">
             <li id="btDev_0" class="btDevRow">Dev 0
-		<a class="btn" id="btConnectBtn"><i class="material-icons">bluetooth_disabled</i></a>
+		<a class="btn btCtl" id="btConnectBtn"><i class="material-icons">bluetooth_disabled</i></a>
 	    </li>
-            <li id="btDev_1" class="btDevRow">Dev 1</li>
-            <li id="btDev_2" class="btDevRow">Dev 2</li>
-            <li id="btDev_3" class="btDevRow">Dev 3</li>
-            <li id="btDev_4" class="btDevRow">Dev 4</li>
+            <li id="btDev_1" class="btDevRow">Dev 1
+		<a class="btn btCtl" id="btConnectBtn"><i class="material-icons">bluetooth_disabled</i></a>
+	    </li>
+            <li id="btDev_2" class="btDevRow">Dev 2
+		<a class="btn btCtl" id="btConnectBtn"><i class="material-icons">bluetooth_disabled</i></a>
+	    </li>
+            <li id="btDev_3" class="btDevRow">Dev 3
+		<a class="btn btCtl" id="btConnectBtn"><i class="material-icons">bluetooth_disabled</i></a>
+	    </li>
+            <li id="btDev_4" class="btDevRow">Dev 4
+		<a class="btn btCtl" id="btConnectBtn"><i class="material-icons">bluetooth_disabled</i></a>
+	    </li>
         </ul>
     </div>
 
