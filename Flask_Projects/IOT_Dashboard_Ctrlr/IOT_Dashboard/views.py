@@ -39,7 +39,7 @@ def connect_bt_dev(dev_name):
     for dev in bt_devices:
         print(f"Checking for dev: {dev.name}")
         if dev_name == dev.name:
-            print(f"[views.pt] attempting to connect to bt device: {dev_name}")
+            print(f"[views.py] attempting to connect to bt device: {dev_name}")
             dev.connect()
             break
 
