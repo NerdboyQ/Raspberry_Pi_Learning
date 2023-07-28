@@ -23,6 +23,7 @@ class BT_Device:
         self.isBLE = isBLE
         self.client = None
         self.connected = False
+        self.isOpen = False
 
     def connect(self):
         if not self.isBLE:
@@ -35,8 +36,14 @@ class BT_Device:
                 "ff00ff00", #green
                 "ff0000ff"  #blue
                 ]
-                self.sendMsg(msg=color_test[randrange(0,len(color_test))])
-                #self.sendMsg(msg="f0f1f2f3f4f5f6f7")
+
+                color_str = str(hex(randrange(126,255)))[2:] + str(hex(randrange(10,255)))[2:] + str(hex(randrange(10,255)))[2:] + str(hex(randrange(10,255)))[2:]
+                if self.isOpen:
+                    self.sendMsg(msg="00"+color_str)
+                    self.isOpen = False
+                else:
+                    self.sendMsg(msg="01"+color_str)
+                    self.isOpen = True
             else:
                 self.pair_NonBLE()
                 self.connect_NonBLE()
@@ -80,7 +87,7 @@ class BT_Device:
 
     def sendMsg(self, msg):
         byte_arr = []
-        for n in range(6,-2,-2):
+        for n in range(len(msg)-2,-2,-2):
             v = msg[n:n+2]
             byte_arr.append(v)
             print(f"sending 0x{v} to {self.name}")
