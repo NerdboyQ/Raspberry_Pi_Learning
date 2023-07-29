@@ -42,6 +42,35 @@
         </ul>
     </div>
 
+    <div class="ghost-trap-container">
+      <img src= {{ url_for('static', filename='img/ghost_trap.png') }} class="btDev ghost-trap-img">
+      <div class="led-ctrl-panel">
+        <div class="slider led-intensity-ctrl">
+          <input type="range" min="1" max="100" value="0" class="slider-pic">
+        </div>
+        <div class="slider led-rgb-ctrl">
+          <input id="slider-red" type="range" min="0" max="100" value="0" class="slider-color">
+        </div>
+        <div class="slider led-rgb-ctrl">
+          <input id="slider-green" type="range" min="0" max="100" value="0" class="slider-color">
+        </div>
+        <div class="slider led-rgb-ctrl">
+          <input id="slider-blue" type="range" min="0" max="100" value="0" class="slider-color">
+        </div>
+      </div>
+      <div>
+        <label class="switch" id="LED-status-lbl">OFF
+          <input type="checkbox">
+          <span id="LED-ctrl-btn" class="slider rounded"></span>
+        </label>
+        <label class="switch" id="trap-door-status-lbl">CLOSED
+          <input type="checkbox">
+          <span id="trap-door-ctrl-btn" class="slider rounded"></span>
+        </label>
+      </div>
+
+    </div>
+
 
     <!--JavaScript at end of body for optimized loading-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

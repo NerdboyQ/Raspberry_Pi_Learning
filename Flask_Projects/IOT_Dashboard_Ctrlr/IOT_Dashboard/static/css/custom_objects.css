@@ -26,6 +26,12 @@ body {
    width: 250px;
 }
 
+.ghost-trap-container {
+   border-radius: 10px;
+   width:300px;
+   height: 300px;
+}
+
 .loader {
   border: 16px solid #f3f3f3; /* Light grey */
   border-top: 16px solid #3498db; /* Blue */
@@ -33,6 +39,20 @@ body {
   width: 120px;
   height: 120px;
   animation: spin 2s linear infinite;
+}
+
+.led-intensity-ctrl::-webkit-slider-thumb {
+   background: url('contrasticon.png');
+   border: 0;
+}
+
+.slider [orient=vertical]{
+   writing-mode: bt-lr; /* IE */
+   -webkit-appearance: slider-vertical; /* Chrome */
+   margin: 0px;
+   padding: 0px;
+   width: 10px;
+   height: 90%;
 }
 
 @keyframes spin {
