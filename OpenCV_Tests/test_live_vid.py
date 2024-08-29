@@ -36,7 +36,7 @@ def find_and_center(object_xcenter,frame_xcenter):
     print(x_range)
 while True:
     _, frame = cap.read() ##~ This line creates an instance of the frame to display the camera feed
-    frame = cv2.flip(frame,flipCode=-1)   ##~ Camera is physically upside down, so rotate the frame
+    #frame = cv2.flip(frame,flipCode=-1)   ##~ Camera is physically upside down, so rotate the frame
     ##~This converts the color space of the frame from Blue/Green/Red -> Hue/Saturation/Value
     hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
      
