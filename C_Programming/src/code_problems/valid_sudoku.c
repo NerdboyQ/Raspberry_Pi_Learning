@@ -26,92 +26,46 @@ void print_board(char *board) {
 
 bool isValidChar(char c) { return c == '.' | (c >= '1' & c <= '9'); }
 
-int getIdx(char c) { return c == '.' ? 0 : c - '0'; }
+int getIdx(char c) { return c == '.' ? 0 : c - '1'; }
 
 bool isValidSudoku (char *board) {
     if (strlen(board) != 81) return false;
-
+    
+    int cols[9][9] = {0};
     for (int r = 0; r < 9; r+=3) {
-        int row[10] = {0};
-        int cols[9][10] = {0};
+        int row[9] = {0};
+        
         for (int c = 0; c < 9; c+=3) {
-            int blk[10] = {0};
-            // char rch = *(board + (r*9) + (c));
+            int blk[9] = {0};
+
             for (int hr = 0; hr < 3; hr+=1) {
                 int tr = r*9+hr*9;
-                // char rch = *(board + tr + (c));
-                // printf(" %c", rch);
                 for (int hc = 0; hc < 3; hc+=1) {
                     char ch1 = *(board + tr + (c+hc));
+                    
                     if (ch1 != '.') {
                         blk[getIdx(ch1)]+=1;
+                        cols[c+hc][getIdx(ch1)]+=1;
                         // printf("%c, idx: %d, val: %d\n", ch1, getIdx(ch1), blk[getIdx(ch1)]);
                         if (blk[getIdx(ch1)]-1) return false;
+                        if (cols[c+hc][getIdx(ch1)]-1) return false;
+                        
                     }
+                    
                     // printf(" %c", ch1);
                     if (!isValidChar(ch1)) return false;
                 }
                 // printf(" | \n");
             }
-            printf("------\n");
+            // printf("------\n");
         }
     }
-
+    
     return true;
 }
-// bool isValidSudoku (char *board) {
-//     if (strlen(board) != 81) return false;
-//     int cols[9][9] = {0};
-    
-//     char ch;
-//     for (int r = 0; r < 9; r+=3) {
-//         int row[9] = {0};
-//         for (int c = 0; c<9; c++) {
-//             int hws[9] = {0};
-//             ch = *(board +(r*9) + c);
-//             // printf("char: %c, i: %d\n", ch, (int)(ch-'1'));
-            
-//             if (!isValidChar(ch)) return false;
-
-//             char ch2 = *(board +((r+1)*9) + c);
-//             char ch3 = *(board +((r+2)*9) + c);
-//             if (!isValidChar(ch2) | !isValidChar(ch3)) return false;
-
-//             // check house
-//             if (!c| ((c+1) % 3 ==0 & c < 8) ){
-//                 for (int h = 0; h< 3;h++) {
-                    
-//                 }
-//             }
-            
-            
-//             if (ch != '.') {
-//                 // check row
-//                 row[(int)(ch-'1')]+=1;
-//                 if (row[(int)(ch-'1')]-1 > 0) return false;
-                
-//                 // check col
-//                 cols[c][ch-'1']+=1;
-                
-//                 if (ch2 != '.') cols[c][ch2-'1']+=1;
-//                 if (ch3 != '.') cols[c][ch3-'1']+=1;
-//                 if (cols[c][(int)(ch-'1')]-1 > 0 |
-//                     cols[c][(int)(ch2-'1')]-1 > 0 |
-//                     cols[c][(int)(ch3-'1')]-1 > 0) return false;
-
-                
-//             }
-            
-//         }
-//     }
-
-//     return true;
-// }
-
-
 
 int main(int argc, char **kwargs) {
-    Test_t tests[5] = {
+    Test_t tests[6] = {
         (Test_t){
             .title = "valid",
         .board = "53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79",
@@ -149,25 +103,19 @@ int main(int argc, char **kwargs) {
             .title = "invalid_char",
             .board = "53..7....65.195....z8....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79",
             .answer=false
+        },
+        (Test_t){
+            .title = "invalid_length",
+            .board = "53..7....65.195....z8....6.8...6...34..8.3..17...2...6.6....28....419..5",
+            .answer=false
         }
     };
     
-
-    // Test_t tests[4] = {
-    //     test_valid,
-    //     test_invalid_col,
-    //     test_invalid_row,
-    //     test_invalid_hws
-    // };
-    
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<6; i++) {
         Test_t test = tests[i];
-        // print_board(test.board); break;
-        printf("[%s] %s\n", test.title, isValidSudoku(test.board) ? "true" : "false");
+        bool answer = isValidSudoku(test.board);
+        printf("[%s] %s - %s\n", test.title, answer ? "true" : "false", answer == test.answer ? "correct answer" : "incorrect answer");
     }
     
-    // printf("%s\n", isValidSudoku(test_invalid_col.board) ? "true" : "false");
-    // printf("%s\n", isValidSudoku(test_invalid_row.board) ? "true" : "false");
-    // printf("%s\n", isValidSudoku(test_invalid_hws.board) ? "true" : "false");
     return 0;
 }
