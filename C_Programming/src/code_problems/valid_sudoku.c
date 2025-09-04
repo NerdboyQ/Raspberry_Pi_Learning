@@ -30,42 +30,34 @@ int getIdx(char c) { return c == '.' ? 0 : c - '1'; }
 
 bool isValidSudoku (char *board) {
     if (strlen(board) != 81) return false;
-    
-    int cols[9][9] = {0};
-    for (int r = 0; r < 9; r+=3) {
-        int row[9] = {0};
-        
-        for (int c = 0; c < 9; c+=3) {
-            int blk[9] = {0};
 
-            for (int hr = 0; hr < 3; hr+=1) {
-                int tr = r*9+hr*9;
-                for (int hc = 0; hc < 3; hc+=1) {
-                    char ch1 = *(board + tr + (c+hc));
-                    
-                    if (ch1 != '.') {
-                        blk[getIdx(ch1)]+=1;
-                        cols[c+hc][getIdx(ch1)]+=1;
-                        // printf("%c, idx: %d, val: %d\n", ch1, getIdx(ch1), blk[getIdx(ch1)]);
-                        if (blk[getIdx(ch1)]-1) return false;
-                        if (cols[c+hc][getIdx(ch1)]-1) return false;
-                        
-                    }
-                    
-                    // printf(" %c", ch1);
-                    if (!isValidChar(ch1)) return false;
-                }
-                // printf(" | \n");
-            }
-            // printf("------\n");
+    int blks[9][9] = {};
+    int rows[9][9] = {};
+    int cols[9][9] = {};
+
+    for (int i =0; i < 81; i++) {
+        int row_i = i/9;
+        int col_i = i%9;
+        int blk_i = row_i/3*3+col_i/3;
+        char chr = *(board+i);
+        int idx = getIdx(chr);
+        if (!isValidChar(chr)) return false;
+        if (chr !='.') {
+            if (rows[row_i][idx]) return false;
+            if (cols[col_i][idx]) return false;
+            if (blks[blk_i][idx]) return false;
+            rows[row_i][idx]+=1;
+            cols[col_i][idx]+=1;
+            blks[blk_i][idx]+=1;
         }
+        // printf("{[blk-%d] row: %d, col: %d, char: %c}\n", blk_i, row_i, col_i, chr);
     }
-    
+
     return true;
 }
 
 int main(int argc, char **kwargs) {
-    Test_t tests[6] = {
+    Test_t tests[8] = {
         (Test_t){
             .title = "valid",
         .board = "53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79",
@@ -108,13 +100,25 @@ int main(int argc, char **kwargs) {
             .title = "invalid_length",
             .board = "53..7....65.195....z8....6.8...6...34..8.3..17...2...6.6....28....419..5",
             .answer=false
-        }
+        },
+        (Test_t){
+            .title = "invalid_corner_case1",
+            .board = "53.57....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79",
+            .answer=false
+        },
+        (Test_t){
+            .title = "invalid_corner_case2",
+            .board = "53..7....6..195....98....6.888.6...34..8.3..17...2...6.6....28....419..5....8..79",
+            .answer=false
+        },
     };
     
-    for (int i=0; i<6; i++) {
+    for (int i=0; i<8; i++) {
         Test_t test = tests[i];
+        printf("Test_%s:\n", test.title);
         bool answer = isValidSudoku(test.board);
-        printf("[%s] %s - %s\n", test.title, answer ? "true" : "false", answer == test.answer ? "correct answer" : "incorrect answer");
+        printf(" %s - %s\n", answer ? "true" : "false", answer == test.answer ? "correct answer" : "incorrect answer");
+        // break;
     }
     
     return 0;
