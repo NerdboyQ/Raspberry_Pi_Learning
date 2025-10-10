@@ -22,9 +22,10 @@ typedef struct {
     int curr_weight, curr_occupancy;
     uint8_t head, tail;
     // concurrency safe params
-    pthread_mutex_t mutex_elev_access; // elevator lock
-    pthread_cond_t cond_elev_is_full; // when the weight limit is met or occupancy is maxed out
-    pthread_cond_t cond_elev_is_occupied; // when there is available space to permit passengers
+    pthread_mutex_t mutex_elev_access; // Mutext for elevator lock access
+    
+    pthread_cond_t cond_elev_not_full; // Condition Variable to signal that the elevator is not full
+    pthread_cond_t cond_elev_has_passengers; // Condition Variable to signal that the elevator has passengers
 } elev_t;
 
 // shared elevator 
@@ -57,8 +58,8 @@ bool elevator_init(elev_t *elev) {
     pthread_mutex_init(&elev->mutex_elev_access, NULL);
     
     // initialize both conditional signals
-    pthread_cond_init(&elev->cond_elev_is_full, NULL);
-    pthread_cond_init(&elev->cond_elev_is_occupied, NULL);
+    pthread_cond_init(&elev->cond_elev_not_full, NULL);
+    pthread_cond_init(&elev->cond_elev_has_passengers, NULL);
     
     return true;
 }
@@ -88,8 +89,8 @@ bool elevator_empty (elev_t *elev) { return !elev->curr_occupancy; }
  */
 void elevator_destroy (elev_t *elev) {
     free(elev->passengers);
-    pthread_cond_destroy(&elev->cond_elev_is_occupied);
-    pthread_cond_destroy(&elev->cond_elev_is_full);
+    pthread_cond_destroy(&elev->cond_elev_has_passengers);
+    pthread_cond_destroy(&elev->cond_elev_not_full);
     pthread_mutex_destroy(&elev->mutex_elev_access);
     
     printf("Cleaned up the memory for the elevator.\n");
@@ -107,36 +108,44 @@ void *permit_passenger(void *arg) {
         while (elevator_full(&elevator)) {
             printf("The elevator is full!\n");
             // make thread wait for full condition signal
-            pthread_cond_wait(&elevator.cond_elev_is_full, &elevator.mutex_elev_access);
+            pthread_cond_wait(&elevator.cond_elev_not_full, &elevator.mutex_elev_access);
         }
         
         printf("There is vacancy for a person to be permitted\n");
-        passenger_t pass = {50 + rand() % 160};
+        // randomly generate 1 or more passengers to add to simulate passengers
+        // walking onto the elevator 
+        int n = 1 + rand() % (elevator.max_passengers - elevator.curr_occupancy);
         
-        // of the passenger adds too much weight, which exceeds that max weight limit
-        // do not allow the passenger onto the elevator 
-        if (pass.weight + elevator.curr_weight > elevator.weight_limit) printf("This person is too heavy to be safely permitted onto the elevator.\n");
-        else {
-            *(elevator.passengers+elevator.tail) = pass;
-            elevator.tail = (elevator.tail + 1) % elevator.max_passengers;
-            elevator.curr_weight+=pass.weight;
-            elevator.curr_occupancy+=1;
+        for (int i =0; i < n; i++) {
+            passenger_t pass = {50 + rand() % 160};
             
-            printf("A passenger weighing %dlbs was permitted\n", pass.weight);
-            // if the occupancy limit is met, set the full signal
-            if (elevator.curr_occupancy == elevator.max_passengers) {
-                printf("! The elevator has reached maximum occupancy! ");
-                pthread_cond_signal(&elevator.cond_elev_is_full);
+            // of the passenger adds too much weight, which exceeds that max weight limit
+            // do not allow the passenger onto the elevator 
+            if (pass.weight + elevator.curr_weight > elevator.weight_limit) printf("!!This person is too heavy to be safely permitted onto the elevator.\n");
+            else {
+                *(elevator.passengers+elevator.tail) = pass;
+                printf(" + A passenger %d, weighing %dlbs was permitted\n", elevator.tail ,pass.weight);
+                elevator.tail = (elevator.tail + 1) % elevator.max_passengers;
+                elevator.curr_weight+=pass.weight;
+                elevator.curr_occupancy+=1;
+                
+                if (elevator.curr_occupancy == elevator.max_passengers) {
+                    printf("! The elevator has reached maximum occupancy! ");
+                    break; // break loop when limit is met
+                }
+                
+                // check if weight limit met
+                if (elevator.curr_weight == elevator.weight_limit) {
+                    printf("! The elevator has reached maximum weight! ");
+                    break; // break loop when limit is met
+                }
             }
-            
-            // once passengers have been added set the signal for available passengers 
-            pthread_cond_signal(&elevator.cond_elev_is_occupied);
-            
-            // check weight limit met
-            if (elevator.curr_weight == elevator.weight_limit) printf("! The elevator has reached maximum weight! ");
         }
         
+        // once passengers have been added set the signal for available passengers 
+        pthread_cond_signal(&elevator.cond_elev_has_passengers);
         pthread_mutex_unlock(&elevator.mutex_elev_access);
+        
         usleep(500000); // sleep for 500ms
     }
     pthread_exit(NULL);
@@ -153,32 +162,29 @@ void *release_passenger(void *arg) {
         // if the elevator is empty, wait until passengers are available to release
         while (elevator_empty(&elevator)) {
             printf("The elevator is empty!\n");
-            // waitfor the occupied conditional signal to be set
-            pthread_cond_wait(&elevator.cond_elev_is_occupied, &elevator.mutex_elev_access);
+            pthread_cond_wait(&elevator.cond_elev_has_passengers, &elevator.mutex_elev_access);
         }
-        printf("The elevator is not empty, so 1 or more passengers will be released.\n");
         
-        // randomly generate 1 or more passengers to add to simulate passengers
-        // walking onto the elevator 
-        int n = 1 + (rand() % elevator.curr_occupancy);
+        // randomly generate 1 or more passengers to remove to simulate passengers
+        // leaving the elevator 
+        int n = 1 + (rand() % (elevator.curr_occupancy));
         for (int i = 0; i < n; i++) {
             int pass_i = (elevator.head + i) % elevator.max_passengers;
             passenger_t pass = *(elevator.passengers+pass_i);
             printf(" - releasing passenger at idx: %d (%dlbs)\n", pass_i, pass.weight);
             elevator.passengers[pass_i].weight = 0;
             elevator.curr_weight-=pass.weight;
-            elevator.head = (elevator.head + 1) % elevator.max_passengers;
         }
-        //TODO: add solutions from todays testing
-        elevator.curr_occupancy-=n; // decrease based on the random number of passengers 
+        
+        elevator.head = (elevator.head + n) % elevator.max_passengers;
+        elevator.curr_occupancy-=n;
         
         if (!elevator.curr_occupancy) {
             printf("! the elevator is empty!\n");
             // pthread_cond_signal(&elevator.cond_elev_is_empty);
         }
         
-        pthread_cond_signal(&elevator.cond_elev_is_full);
-        
+        pthread_cond_signal(&elevator.cond_elev_not_full);
         pthread_mutex_unlock(&elevator.mutex_elev_access);
         usleep(500000);
     }
@@ -205,6 +211,3 @@ int main()
 
     return 0;
 }
-```
-
-This is document #7 that you shared. The synchronization is correct! Would you like me to create a cleaned-up version with the small improvements I mentioned?​​​​​​​​​​​​​​​​
