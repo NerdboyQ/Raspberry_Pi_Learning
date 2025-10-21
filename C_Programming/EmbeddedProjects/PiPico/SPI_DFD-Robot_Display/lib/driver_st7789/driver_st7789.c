@@ -133,7 +133,7 @@
  *            - 1 write failed
  * @note      none
  */
-static uint8_t a_st7789_write_byte(st7789_handle_t *handle, uint8_t data, uint8_t cmd)
+uint8_t a_st7789_write_byte(st7789_handle_t *handle, uint8_t data, uint8_t cmd)
 {
     uint8_t res;
 
@@ -162,7 +162,7 @@ static uint8_t a_st7789_write_byte(st7789_handle_t *handle, uint8_t data, uint8_
  *            - 1 write failed
  * @note      none
  */
-static uint8_t a_st7789_write_bytes(st7789_handle_t *handle, uint8_t *data, uint16_t len, uint8_t cmd)
+uint8_t a_st7789_write_bytes(st7789_handle_t *handle, uint8_t *data, uint16_t len, uint8_t cmd)
 {
     uint8_t res;
 
@@ -4353,7 +4353,7 @@ uint8_t st7789_draw_picture_18bits(st7789_handle_t *handle, uint16_t left, uint1
  *            - 1 draw point failed
  * @note      none
  */
-static uint8_t a_st7789_draw_point(st7789_handle_t *handle, uint16_t x, uint16_t y, uint32_t color)
+uint8_t a_st7789_draw_point(st7789_handle_t *handle, uint16_t x, uint16_t y, uint32_t color)
 {
     uint8_t buf[4];
 
@@ -4459,7 +4459,7 @@ static uint8_t a_st7789_draw_point(st7789_handle_t *handle, uint16_t x, uint16_t
  *            - 1 show char failed
  * @note      none
  */
-static uint8_t a_st7789_show_char(st7789_handle_t *handle, uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint32_t color)
+uint8_t a_st7789_show_char(st7789_handle_t *handle, uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint32_t color)
 {
     uint8_t temp, t, t1;
     uint16_t y0 = y;

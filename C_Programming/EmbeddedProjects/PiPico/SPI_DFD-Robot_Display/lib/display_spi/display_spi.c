@@ -4,12 +4,13 @@
 #include "driver_st7789.h"
 #include "display_spi.h"
 
-// START --- ST7789 SPI callback functions =============================================================
+// changing to global source singleton 
+spi_display_t display;
 
 /**
  * SPI initialization callback for ST7789 driver
  */
-static uint8_t st7789_spi_init_callback(void) {
+uint8_t st7789_spi_init_callback(void) {
     // Initialize SPI
     // spi_init(spi0, 62500000); // 62.5 MHz
     spi_init(spi0, 1000*1000);
@@ -28,7 +29,7 @@ static uint8_t st7789_spi_init_callback(void) {
 /**
  * SPI deinitialization callback for ST7789 driver
  */
-static uint8_t st7789_spi_deinit_callback(void) {
+uint8_t st7789_spi_deinit_callback(void) {
     if (!display.spi_index) spi_deinit(spi0);
     else  spi_deinit(spi1);
     return 0;
@@ -40,7 +41,7 @@ static uint8_t st7789_spi_deinit_callback(void) {
  * @param buf: byte array message to send
  * @param len: length of buffer
  */
-static uint8_t st7789_spi_write_callback(uint8_t *buf, uint16_t len) {
+uint8_t st7789_spi_write_callback(uint8_t *buf, uint16_t len) {
     gpio_put(display.spi_pin_cs, 0); // Select chip
     if (!display.spi_index) spi_write_blocking(spi0, buf, len);
     else spi_write_blocking(spi1, buf, len);
@@ -51,7 +52,7 @@ static uint8_t st7789_spi_write_callback(uint8_t *buf, uint16_t len) {
 /**
  * Command/Data GPIO init callback
  */
-static uint8_t st7789_cmd_data_gpio_init_callback(void) {
+uint8_t st7789_cmd_data_gpio_init_callback(void) {
     gpio_init(display.display_pin_dc);
     gpio_set_dir(display.display_pin_dc, GPIO_OUT);
     return 0;
@@ -60,7 +61,7 @@ static uint8_t st7789_cmd_data_gpio_init_callback(void) {
 /**
  * Command/Data GPIO deinit callback
  */
-static uint8_t st7789_cmd_data_gpio_deinit_callback(void) {
+uint8_t st7789_cmd_data_gpio_deinit_callback(void) {
     // Nothing special needed
     return 0;
 }
@@ -68,7 +69,7 @@ static uint8_t st7789_cmd_data_gpio_deinit_callback(void) {
 /**
  * Command/Data GPIO write callback
  */
-static uint8_t st7789_cmd_data_gpio_write_callback(uint8_t data) {
+uint8_t st7789_cmd_data_gpio_write_callback(uint8_t data) {
     gpio_put(display.display_pin_dc, data);
     return 0;
 }
@@ -76,7 +77,7 @@ static uint8_t st7789_cmd_data_gpio_write_callback(uint8_t data) {
 /**
  * Reset GPIO init callback
  */
-static uint8_t st7789_reset_gpio_init_callback(void) {
+uint8_t st7789_reset_gpio_init_callback(void) {
     gpio_init(display.display_pin_rt);
     gpio_set_dir(display.display_pin_rt, GPIO_OUT);
     return 0;
@@ -85,7 +86,7 @@ static uint8_t st7789_reset_gpio_init_callback(void) {
 /**
  * Reset GPIO deinit callback
  */
-static uint8_t st7789_reset_gpio_deinit_callback(void) {
+uint8_t st7789_reset_gpio_deinit_callback(void) {
     // Nothing special needed
     return 0;
 }
@@ -93,7 +94,7 @@ static uint8_t st7789_reset_gpio_deinit_callback(void) {
 /**
  * Reset GPIO write callback
  */
-static uint8_t st7789_reset_gpio_write_callback(uint8_t data) {
+uint8_t st7789_reset_gpio_write_callback(uint8_t data) {
     gpio_put(display.display_pin_rt, data);
     return 0;
 }
@@ -101,14 +102,14 @@ static uint8_t st7789_reset_gpio_write_callback(uint8_t data) {
 /**
  * Delay callback
  */
-static void st7789_delay_ms_callback(uint32_t ms) {
+void st7789_delay_ms_callback(uint32_t ms) {
     sleep_ms(ms);
 }
 
 /**
  * Debug print callback
  */
-static void st7789_debug_print_callback(const char *fmt, ...) {
+void st7789_debug_print_callback(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vprintf(fmt, args);

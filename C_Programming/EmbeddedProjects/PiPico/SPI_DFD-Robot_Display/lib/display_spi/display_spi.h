@@ -38,18 +38,15 @@ typedef struct {
     uint8_t display_pin_rt, display_pin_dc, display_pin_bl;
 } spi_display_t;
 
-
-static spi_display_t display;
-
 /**
  * SPI initialization callback for ST7789 driver
  */
-static uint8_t st7789_spi_init_callback(void);
+uint8_t st7789_spi_init_callback(void);
 
 /**
  * SPI deinitialization callback for ST7789 driver
  */
-static uint8_t st7789_spi_deinit_callback(void);
+uint8_t st7789_spi_deinit_callback(void);
 
 /**
  * SPI write callback for ST7789 driver
@@ -57,47 +54,47 @@ static uint8_t st7789_spi_deinit_callback(void);
  * @param buf: byte array message to send
  * @param len: length of buffer
  */
-static uint8_t st7789_spi_write_callback(uint8_t *buf, uint16_t len);
+uint8_t st7789_spi_write_callback(uint8_t *buf, uint16_t len);
 
 /**
  * Command/Data GPIO init callback
  */
-static uint8_t st7789_cmd_data_gpio_init_callback(void);
+uint8_t st7789_cmd_data_gpio_init_callback(void);
 
 /**
  * Command/Data GPIO deinit callback
  */
-static uint8_t st7789_cmd_data_gpio_deinit_callback(void);
+uint8_t st7789_cmd_data_gpio_deinit_callback(void);
 
 /**
  * Command/Data GPIO write callback
  */
-static uint8_t st7789_cmd_data_gpio_write_callback(uint8_t data);
+uint8_t st7789_cmd_data_gpio_write_callback(uint8_t data);
 
 /**
  * Reset GPIO init callback
  */
-static uint8_t st7789_reset_gpio_init_callback(void);
+uint8_t st7789_reset_gpio_init_callback(void);
 
 /**
  * Reset GPIO deinit callback
  */
-static uint8_t st7789_reset_gpio_deinit_callback(void);
+uint8_t st7789_reset_gpio_deinit_callback(void);
 
 /**
  * Reset GPIO write callback
  */
-static uint8_t st7789_reset_gpio_write_callback(uint8_t data);
+uint8_t st7789_reset_gpio_write_callback(uint8_t data);
 
 /**
  * Delay callback
  */
-static void st7789_delay_ms_callback(uint32_t ms);
+void st7789_delay_ms_callback(uint32_t ms);
 
 /**
  * Debug print callback
  */
-static void st7789_debug_print_callback(const char *fmt, ...);
+void st7789_debug_print_callback(const char *fmt, ...);
 
 /**
  * Checks for any pin assignment conflict
