@@ -1,7 +1,7 @@
 import sys
 import random
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 from PySide6.QtCore import Qt, Slot, QRect
 from PySide6.QtGui import QPainter, QPen, QBrush, QColor, QFont
 
@@ -24,8 +24,9 @@ class NodeWidget(QWidget):
         self.diameter = diameter
         self.border_width = self.diameter*.01 # force border to be 1% of the diameter
         self.color = color
-        if border_color == None: self.border_color = self.color
-        else: self.border_color = border_color
+        if border_color == None: self.border_color = QColor(self.color)
+        else: self.border_color = QColor(border_color)
+        # print(self.border_color,type(self.border_color))
         self.text = str(text)
         self.text_color = text_color
 
@@ -70,24 +71,28 @@ class NodeWidget(QWidget):
         self.text = text
         self.update()
 
-class MyWidget(QWidget):
+class NodeHolderWidget(QWidget):
     """
-    Demo custom widget class: MyWidget
+    Holder for Lists
     """
-    def __init__(self):
+    def __init__(self, lst, orientation='horizontal', spacing=2, padding=5):
         """
-        Constructor for Custom widget basics
+        Constructor: creates node holder widget instance
         """
         super().__init__()
 
-        self.hello = ["Hello", "blah", "hah", "my nigga"]
+        self.nodes = []
+        self.spacing = spacing
+        self.padding = padding
+        self.border_width = 2
+        self.bg_color = QColor('transparent')
+        self.border_color = QColor('white')
 
-        self.button = QtWidgets.QPushButton("Click Me!")
-        self.text = QtWidgets.QLabel("Hello World", alignment=Qt.AlignmentFlag.AlignCenter)
+        if orientation == 'horizontal': self.layout = QHBoxLayout(self)
+        elif orientation == 'vertical': self.layout = QVBoxLayout(self)
 
-        self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addWidget(self.text)
-        self.layout.addWidget(self.button)
+        self.layout.setSpacing(spacing)
+        self.layout.setContentsMargins(padding, padding, padding, padding)
 
         # Create custom circle widgets
         dflt_QtColors = QColor.colorNames() # gets default QtColors as list of strings
@@ -120,8 +125,99 @@ class MyWidget(QWidget):
         rand_color = random.randint(0, len(dflt_QtColors))
         rand_color = dflt_QtColors[rand_color]
         print("Random color selected:", rand_color)
-        self.circle1 = NodeWidget(80, QColor(rand_color),text=25)
-        self.layout.addWidget(self.circle1)
+
+        for v in lst:
+            self.add_node(
+                NodeWidget(80,color=rand_color,text=v)
+            )
+
+    def add_node(self, node):
+        """
+        Add node to holder
+        
+        :param self: Description
+        :param node: Description
+        """
+        self.nodes.append(node)
+        self.layout.addWidget(node)
+        return node
+
+    def add_stretch(self):
+        """
+        Docstring for add_stretch
+        
+        :param self: Description
+        """
+        self.layout.addStretch()
+    
+    def clear_nodes(self):
+        """
+        Docstring for clear_nodes
+        
+        :param self: Description
+        """
+        for node in self.nodes:
+            self.layout.removeWidget(node)
+            node.deleteLater()
+        
+        self.nodes.clear()
+    
+    def get_node(self, index):
+        """
+        Docstring for get_node
+        
+        :param self: Description
+        """
+        if 0 <= index < len(self.nodes):
+            return self.nodes[index]
+        
+        return None
+    
+    def paintEvent(self, event):
+        """
+        Docstring for paintEvent
+        
+        :param self: Description
+        :param event: Description
+        """
+        painter  = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        brush = QBrush(self.bg_color)
+        painter.setBrush(brush)
+
+        pen = QPen(self.border_color, self.border_width)
+        painter.setPen(pen)
+
+        rect = self.rect().adjusted(
+            self.border_width // 2,
+            self.border_width // 2,
+            -self.border_width // 2,
+            -self.border_width // 2
+        )
+        painter.drawRoundedRect(rect, 10, 10)
+
+class MyWidget(QWidget):
+    """
+    Demo custom widget class: MyWidget
+    """
+    def __init__(self):
+        """
+        Constructor for Custom widget basics
+        """
+        super().__init__()
+
+        self.hello = ["Hello", "blah", "hah", "my nigga"]
+
+        self.button = QtWidgets.QPushButton("Click Me!")
+        self.text = QtWidgets.QLabel("Hello World", alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.button)
+
+        holderWidget = NodeHolderWidget([ random.randint(1,100) for _ in range(5) ])
+        self.layout.addWidget(holderWidget)
 
         self.button.clicked.connect(self.magic)
 
