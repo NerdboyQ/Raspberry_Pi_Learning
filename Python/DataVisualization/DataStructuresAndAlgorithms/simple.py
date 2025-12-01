@@ -14,7 +14,33 @@ class ArrowDirection(Enum):
     DIR_ARROW_DIAG_UP_RIGHT = 4,
     DIR_ARROW_DIAG_UP_LEFT = 5,
     DIR_ARROW_DIAG_DOWN_LEFT = 6,
-    DIR_ARROW_DIAG_DOWN_RIGHT = 7
+    DIR_ARROW_DIAG_DOWN_RIGHT = 7,
+
+# > NOTE: This required a reference image as the position needs coordinates in referece to the 
+#         eldest widget (main window in most cases)
+def getWidgetPosRef(widget: QWidget, widgetPos: ArrowDirection=None, relativeTo: QWidget = None) -> tuple:
+    """
+    Retrieves the position of a widget and returns the reference position
+    to focus on
+
+    @param widget: the widget to consider
+    @param widgetPos: suggested reference position of the widget
+
+    @return tuple for x,y reference position
+    """
+    if relativeTo: pos = widget.mapTo(relativeTo, QPoint(0,0))
+    else: pos = widget.pos()
+    x,y = pos.x(), pos.y()
+    w,h = widget.width(), widget.height()
+    if widgetPos == None: return (x+w//2, y+h//2)
+    elif widgetPos == ArrowDirection.DIR_ARROW_DOWN: return (x+w//2, y+h)    # Center of widget
+    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_DOWN_RIGHT: return (x+w, y+h)
+    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_DOWN_LEFT: return (x, y+h)
+    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_UP_RIGHT: return (x+w, y)
+    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_UP_LEFT: return (x, y)
+    elif widgetPos == ArrowDirection.DIR_ARROW_UP: return (x+w//2, y)
+    elif widgetPos == ArrowDirection.DIR_ARROW_LEFT: return (x, y+h//2)
+    elif widgetPos == ArrowDirection.DIR_ARROW_RIGHT: return (x+w, y+h//2)
 
 class ArrowWidget(QWidget):
     """
@@ -125,7 +151,7 @@ class NodeHolderWidget(QWidget):
     """
     Holder for Lists
     """
-    def __init__(self, lst, orientation='horizontal', spacing=1, padding=10):
+    def __init__(self, lst, orientation='horizontal', spacing=1, padding=10, height=200):
         """
         Constructor: creates node holder widget instance
         """
@@ -136,7 +162,7 @@ class NodeHolderWidget(QWidget):
         self.bg_color = QColor('transparent')
         self.border_color = QColor('white')
 
-        self.setFixedHeight(200)
+        self.setFixedHeight(height)
 
         if orientation == 'horizontal': self.layout = QHBoxLayout(self)
         elif orientation == 'vertical': self.layout = QVBoxLayout(self)
@@ -145,7 +171,7 @@ class NodeHolderWidget(QWidget):
         self.layout.setContentsMargins(padding, padding, padding, padding)
         # the line below helped avoid the horizontal and veritcal alignment
         # > NOTE: This must be set after the contents margins has been set
-        self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignCenter)
         # Create custom circle widgets
         dflt_QtColors = QColor.colorNames() # gets default QtColors as list of strings
         """
@@ -179,9 +205,8 @@ class NodeHolderWidget(QWidget):
         print("Random color selected:", rand_color)
 
         for v in lst:
-            self.add_node(
-                NodeWidget(80,color=rand_color,text=v)
-            )
+            n = NodeWidget(height//4,color=rand_color,text=v)
+            self.add_node(n)
 
     def add_node(self, node):
         """
@@ -271,20 +296,38 @@ class MyWidget(QWidget):
         """
         self.holderWidget = NodeHolderWidget(
             [ random.randint(1,100) for _ in range(5) ],
-            spacing=5
+            spacing=5,
+            height=300
         )
         self.layout.addWidget(self.holderWidget)
 
-        self.arrow = ArrowWidget(height=30, width=30)
-        self.layout.addWidget(self.arrow)
+        self.arrow1 = ArrowWidget(height=30, width=30, color=QColor('green'))
+        self.layout.addWidget(self.arrow1)
+        self.arrow2 = ArrowWidget(height=30, width=30, color=QColor('orange'))
+        self.layout.addWidget(self.arrow2)
 
-        print("Arrow original position:", self.arrow.pos()) # return (0,0), appears relative to default location.
+        
+        # self.button.clicked.connect(self.magic)
+
+    # > NOTE: The show event is called once the widget has already rendered, and 
+    #         positions (coordinates) can be referenced.
+    def showEvent(self, event):
+        print("Arrow original position:", self.arrow1.pos()) # return (0,0), appears relative to default location.
+        print("Arrow geometry:", self.arrow1.geometry())
         # animation working, TODO: trigger repeatedly 
-        self.anim = QPropertyAnimation(self.arrow, b"pos") # object to move/animate and the movement type?
-        self.anim.setEndValue(QPoint(400,400))
+        self.anim = QPropertyAnimation(self.arrow1, b"pos") # object to move/animate and the movement type?
+
+        x,y = getWidgetPosRef(self.holderWidget.nodes[0], ArrowDirection.DIR_ARROW_DOWN, self)
+        print(x,y)
+        self.anim.setEndValue(QPoint(x-self.arrow1.width//2,y))
         self.anim.setDuration(2000) # in ms
         self.anim.start()
-        # self.button.clicked.connect(self.magic)
+        
+        x,y = getWidgetPosRef(self.holderWidget.nodes[2], ArrowDirection.DIR_ARROW_DOWN, self)
+        self.anim2 = QPropertyAnimation(self.arrow2, b"pos") # object to move/animate and the movement type?
+        self.anim2.setEndValue(QPoint(x-self.arrow1.width//2,y))
+        self.anim2.setDuration(2000) # in ms
+        self.anim2.start()
 
     @Slot()
     def magic(self):
