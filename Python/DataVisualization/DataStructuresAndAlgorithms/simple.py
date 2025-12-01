@@ -3,7 +3,7 @@ import random
 from enum import Enum
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
-from PySide6.QtCore import Qt, Slot, QRect
+from PySide6.QtCore import Qt, Slot, QRect, QAnimationGroup, QParallelAnimationGroup, QPoint, QPropertyAnimation
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QBrush, QColor, QFont
 
 class ArrowDirection(Enum):
@@ -40,16 +40,16 @@ class ArrowWidget(QWidget):
         center_x ,start_y = self.width//2, self.height
         # outline of arrow using points
         path.moveTo(center_x-self.width//4, start_y)                    # left middle
-        path.lineTo(center_x-self.width//4, start_y-self.height//4*3)   # line to arrow head base
-        path.lineTo(center_x-self.width//2, start_y-self.height//4*3)   # left corner of arrow head
+        path.lineTo(center_x-self.width//4, start_y-self.height//4*2)   # line to arrow head base
+        path.lineTo(center_x-self.width//2, start_y-self.height//4*2)   # left corner of arrow head
         path.lineTo(center_x, start_y-self.height)                      # point of arrow
-        path.lineTo(center_x+self.width//2, start_y-self.height//4*3)   # right corner of arrow head
-        path.lineTo(center_x+self.width//4, start_y-self.height//4*3)   # back to line
+        path.lineTo(center_x+self.width//2, start_y-self.height//4*2)   # right corner of arrow head
+        path.lineTo(center_x+self.width//4, start_y-self.height//4*2)   # back to line
         path.lineTo(center_x+self.width//4, start_y)                    # complete the base
         path.closeSubpath()                                             # close the path
 
         painter.fillPath(path, QBrush(self.color))  # fill the arrow with the desired color
-        painter.setPen(QPen(QColor('black'), 2))    # set outline size and color
+        painter.setPen(QPen(QColor('gray'), 1))     # set outline color and size
         painter.drawPath(path)                      # draw the arrow
 
 class NodeWidget(QWidget):
@@ -269,14 +269,21 @@ class MyWidget(QWidget):
         self.layout.addWidget(self.text)
         self.layout.addWidget(self.button)
         """
-        holderWidget = NodeHolderWidget(
+        self.holderWidget = NodeHolderWidget(
             [ random.randint(1,100) for _ in range(5) ],
             spacing=5
         )
-        self.layout.addWidget(holderWidget)
+        self.layout.addWidget(self.holderWidget)
 
-        arrow = ArrowWidget(height=30, width=30)
-        self.layout.addWidget(arrow)
+        self.arrow = ArrowWidget(height=30, width=30)
+        self.layout.addWidget(self.arrow)
+
+        print("Arrow original position:", self.arrow.pos()) # return (0,0), appears relative to default location.
+        # animation working, TODO: trigger repeatedly 
+        self.anim = QPropertyAnimation(self.arrow, b"pos") # object to move/animate and the movement type?
+        self.anim.setEndValue(QPoint(400,400))
+        self.anim.setDuration(2000) # in ms
+        self.anim.start()
         # self.button.clicked.connect(self.magic)
 
     @Slot()
