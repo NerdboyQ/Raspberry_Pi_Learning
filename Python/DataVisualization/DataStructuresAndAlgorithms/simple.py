@@ -6,19 +6,19 @@ from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 from PySide6.QtCore import Qt, Slot, QRect, QAnimationGroup, QParallelAnimationGroup, QPoint, QPropertyAnimation
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QBrush, QColor, QFont
 
-class ArrowDirection(Enum):
-    DIR_ARROW_LEFT = 0,
-    DIR_ARROW_UP = 1,
-    DIR_ARROW_RIGHT = 2,
-    DIR_ARROW_DOWN = 3,
-    DIR_ARROW_DIAG_UP_RIGHT = 4,
-    DIR_ARROW_DIAG_UP_LEFT = 5,
-    DIR_ARROW_DIAG_DOWN_LEFT = 6,
-    DIR_ARROW_DIAG_DOWN_RIGHT = 7,
+class RefDirection(Enum):
+    DIR_LEFT = 0,
+    DIR_UP = 1,
+    DIR_RIGHT = 2,
+    DIR_DOWN = 3,
+    DIR_DIAG_UP_RIGHT = 4,
+    DIR_DIAG_UP_LEFT = 5,
+    DIR_DIAG_DOWN_LEFT = 6,
+    DIR_DIAG_DOWN_RIGHT = 7,
 
 # > NOTE: This required a reference image as the position needs coordinates in referece to the 
 #         eldest widget (main window in most cases)
-def getWidgetPosRef(widget: QWidget, widgetPos: ArrowDirection=None, relativeTo: QWidget = None) -> tuple:
+def getWidgetPosRef(widget: QWidget, widgetPos: RefDirection=None, relativeTo: QWidget = None) -> tuple:
     """
     Retrieves the position of a widget and returns the reference position
     to focus on
@@ -33,20 +33,20 @@ def getWidgetPosRef(widget: QWidget, widgetPos: ArrowDirection=None, relativeTo:
     x,y = pos.x(), pos.y()
     w,h = widget.width(), widget.height()
     if widgetPos == None: return (x+w//2, y+h//2)
-    elif widgetPos == ArrowDirection.DIR_ARROW_DOWN: return (x+w//2, y+h)    # Center of widget
-    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_DOWN_RIGHT: return (x+w, y+h)
-    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_DOWN_LEFT: return (x, y+h)
-    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_UP_RIGHT: return (x+w, y)
-    elif widgetPos == ArrowDirection.DIR_ARROW_DIAG_UP_LEFT: return (x, y)
-    elif widgetPos == ArrowDirection.DIR_ARROW_UP: return (x+w//2, y)
-    elif widgetPos == ArrowDirection.DIR_ARROW_LEFT: return (x, y+h//2)
-    elif widgetPos == ArrowDirection.DIR_ARROW_RIGHT: return (x+w, y+h//2)
+    elif widgetPos == RefDirection.DIR_DOWN: return (x+w//2, y+h)    # Center of widget
+    elif widgetPos == RefDirection.DIR_DIAG_DOWN_RIGHT: return (x+w, y+h)
+    elif widgetPos == RefDirection.DIR_DIAG_DOWN_LEFT: return (x, y+h)
+    elif widgetPos == RefDirection.DIR_DIAG_UP_RIGHT: return (x+w, y)
+    elif widgetPos == RefDirection.DIR_DIAG_UP_LEFT: return (x, y)
+    elif widgetPos == RefDirection.DIR_UP: return (x+w//2, y)
+    elif widgetPos == RefDirection.DIR_LEFT: return (x, y+h//2)
+    elif widgetPos == RefDirection.DIR_RIGHT: return (x+w, y+h//2)
 
 class ArrowWidget(QWidget):
     """
     Arrow widget for index pointing
     """
-    def __init__(self, height, width, color=QColor('white'), direction=ArrowDirection.DIR_ARROW_UP):
+    def __init__(self, height, width, color=QColor('white'), direction=RefDirection.DIR_UP):
         super().__init__()
         self.height = height
         if width <= 0: self.width = self.height
@@ -317,13 +317,13 @@ class MyWidget(QWidget):
         # animation working, TODO: trigger repeatedly 
         self.anim = QPropertyAnimation(self.arrow1, b"pos") # object to move/animate and the movement type?
 
-        x,y = getWidgetPosRef(self.holderWidget.nodes[0], ArrowDirection.DIR_ARROW_DOWN, self)
+        x,y = getWidgetPosRef(self.holderWidget.nodes[0], RefDirection.DIR_DOWN, self)
         print(x,y)
         self.anim.setEndValue(QPoint(x-self.arrow1.width//2,y))
         self.anim.setDuration(2000) # in ms
         self.anim.start()
         
-        x,y = getWidgetPosRef(self.holderWidget.nodes[2], ArrowDirection.DIR_ARROW_DOWN, self)
+        x,y = getWidgetPosRef(self.holderWidget.nodes[2], RefDirection.DIR_DOWN, self)
         self.anim2 = QPropertyAnimation(self.arrow2, b"pos") # object to move/animate and the movement type?
         self.anim2.setEndValue(QPoint(x-self.arrow1.width//2,y))
         self.anim2.setDuration(2000) # in ms
