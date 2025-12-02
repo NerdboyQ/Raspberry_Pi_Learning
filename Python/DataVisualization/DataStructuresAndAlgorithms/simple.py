@@ -3,7 +3,7 @@ import random
 from enum import Enum
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
-from PySide6.QtCore import Qt, Slot, QRect, QAnimationGroup, QParallelAnimationGroup, QPoint, QPropertyAnimation
+from PySide6.QtCore import Qt, Slot, QRect, QAnimationGroup, QParallelAnimationGroup, QPoint, QPropertyAnimation, QSequentialAnimationGroup
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QBrush, QColor, QFont
 
 class RefDirection(Enum):
@@ -82,7 +82,7 @@ class NodeWidget(QWidget):
     """
     Placeholder for base class for lists, linked lists, trees, & graphs/matrices
     """
-    def __init__(self, diameter, color, border_color = None, text="", text_color=QColor('white')):
+    def __init__(self, diameter, color=QColor('white'), border_color = QColor('black'), text="", text_color=QColor('black')):
         """
         Constructor for Custom Node Widget
         
@@ -156,7 +156,7 @@ class NodeHolderWidget(QWidget):
         Constructor: creates node holder widget instance
         """
         super().__init__()
-
+        
         self.nodes = []
         self.border_width = 2
         self.bg_color = QColor('transparent')
@@ -171,7 +171,7 @@ class NodeHolderWidget(QWidget):
         self.layout.setContentsMargins(padding, padding, padding, padding)
         # the line below helped avoid the horizontal and veritcal alignment
         # > NOTE: This must be set after the contents margins has been set
-        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignCenter)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom)
         # Create custom circle widgets
         dflt_QtColors = QColor.colorNames() # gets default QtColors as list of strings
         """
@@ -205,8 +205,68 @@ class NodeHolderWidget(QWidget):
         print("Random color selected:", rand_color)
 
         for v in lst:
-            n = NodeWidget(height//4,color=rand_color,text=v)
+            # n = NodeWidget(height//4,color=rand_color,text=v)
+            n = NodeWidget(height//4, text=v)
             self.add_node(n)
+
+    def print_values(self):
+        print("[",end='')
+        for node in self.nodes:
+            if node == self.nodes[0]: print(node.text, end='')
+            else: print(f",{node.text}", end='')
+        print("]")
+
+    def swap_nodes(self, i1: int, i2: int):
+        n1 = self.nodes[i1]
+        n2 = self.nodes[i2]
+        print(f"Swapping {n1.text} & {n2.text}")
+        print("Before:", end='')
+        self.print_values()
+
+        x1,y1 = getWidgetPosRef(n1, RefDirection.DIR_DIAG_UP_LEFT,relativeTo=self)
+        x2,y2 = getWidgetPosRef(n2, RefDirection.DIR_DIAG_UP_LEFT,relativeTo=self)
+
+        # handle animation
+        self.anim_a1 = QPropertyAnimation(n1, b"pos") # object to move/animate and the movement type?
+        self.anim_a2 = QPropertyAnimation(n1, b"pos")
+        self.anim_a3 = QPropertyAnimation(n1, b"pos")
+        y1_n = y1-n1.height()*2
+        print(f"({x1},{y1}) => ({x1},{y1_n})")
+        self.anim_a1.setEndValue(QPoint(x1,y1_n))
+        self.anim_a1.setDuration(500) # in ms
+        self.anim_a2.setEndValue(QPoint(x2,y1_n))
+        self.anim_a2.setDuration(500) # in ms
+        self.anim_a3.setEndValue(QPoint(x2,y1))
+        self.anim_a3.setDuration(500) # in ms
+        # self.anim.start()
+        self.groupAnim1 = QSequentialAnimationGroup()
+        self.groupAnim1.addAnimation(self.anim_a1)
+        self.groupAnim1.addAnimation(self.anim_a2)
+        self.groupAnim1.addAnimation(self.anim_a3)
+        self.groupAnim1.start()
+
+        
+        self.anim_b1 = QPropertyAnimation(n2, b"pos") # object to move/animate and the movement type?
+        self.anim_b2 = QPropertyAnimation(n2, b"pos")
+        self.anim_b3 = QPropertyAnimation(n2, b"pos")
+        y2_n = y2-n2.height()
+        print(f"({x2},{y2}) => ({x2},{y2_n})")
+        self.anim_b1.setEndValue(QPoint(x2,y2_n))
+        self.anim_b1.setDuration(500) # in ms
+        self.anim_b2.setEndValue(QPoint(x1,y2_n))
+        self.anim_b2.setDuration(500) # in ms
+        self.anim_b3.setEndValue(QPoint(x1,y1))
+        self.anim_b3.setDuration(500) # in ms
+
+        self.groupAnim2 = QSequentialAnimationGroup()
+        self.groupAnim2.addAnimation(self.anim_b1)
+        self.groupAnim2.addAnimation(self.anim_b2)
+        self.groupAnim2.addAnimation(self.anim_b3)
+        self.groupAnim2.start()
+
+        self.nodes[i1], self.nodes[i2] = self.nodes[i2], self.nodes[i1]
+        print("After:", end='')
+        self.print_values()
 
     def add_node(self, node):
         """
@@ -217,6 +277,7 @@ class NodeHolderWidget(QWidget):
         """
         self.nodes.append(node)
         self.layout.addWidget(node)
+        
         return node
 
     def add_stretch(self):
@@ -274,6 +335,17 @@ class NodeHolderWidget(QWidget):
         )
         painter.drawRoundedRect(rect, 10, 10)
 
+    def showEvent(self, event):
+        # Removes nodes from layout and converts them to absolute positioning.
+        # This is done once the widgets are fully rendered and shown to get 
+        # the exact x,y position.
+        for node in self.nodes:
+            x2,y2 = getWidgetPosRef(node, RefDirection.DIR_DIAG_UP_LEFT,relativeTo=self)
+            self.layout.removeWidget(node)
+            node.setParent(self)
+            node.move(x2,y2)
+            node.show()
+
 class MyWidget(QWidget):
     """
     Demo custom widget class: MyWidget
@@ -286,14 +358,14 @@ class MyWidget(QWidget):
         """
         self.hello = ["Hello", "blah", "hah", "my nigga"]
 
-        self.button = QtWidgets.QPushButton("Click Me!")
         self.text = QtWidgets.QLabel("Hello World", alignment=Qt.AlignmentFlag.AlignCenter)
         """
+        self.button = QtWidgets.QPushButton("Run Bubble Sort!")
         self.layout = QtWidgets.QVBoxLayout(self)
         """
         self.layout.addWidget(self.text)
-        self.layout.addWidget(self.button)
         """
+        self.layout.addWidget(self.button)
         self.holderWidget = NodeHolderWidget(
             [ random.randint(1,100) for _ in range(5) ],
             spacing=5,
@@ -306,8 +378,9 @@ class MyWidget(QWidget):
         self.arrow2 = ArrowWidget(height=30, width=30, color=QColor('orange'))
         self.layout.addWidget(self.arrow2)
 
+        self.holderWidget.print_values()
         
-        # self.button.clicked.connect(self.magic)
+        self.button.clicked.connect(self.magic)
 
     # > NOTE: The show event is called once the widget has already rendered, and 
     #         positions (coordinates) can be referenced.
@@ -336,7 +409,9 @@ class MyWidget(QWidget):
         
         :param self: Description
         """
-        self.text.setText(random.choice(self.hello))
+        print("Clicked")
+        # self.text.setText(random.choice(self.hello))
+        self.holderWidget.swap_nodes(0,1)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
