@@ -4,10 +4,13 @@ import time
 from enum import Enum
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
-from PySide6.QtCore import Qt, Slot, QRect, QTimer, QParallelAnimationGroup, QPoint, QPropertyAnimation, QSequentialAnimationGroup
+from PySide6.QtCore import Qt, Property, Slot, QRect, QTimer, QParallelAnimationGroup, QPoint, QPropertyAnimation, QSequentialAnimationGroup
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QBrush, QColor, QFont
 
 class RefDirection(Enum):
+    """
+    Enum to indicate specific Reference direction for a widget
+    """
     DIR_LEFT = 0,
     DIR_UP = 1,
     DIR_RIGHT = 2,
@@ -48,6 +51,14 @@ class ArrowWidget(QWidget):
     Arrow widget for index pointing
     """
     def __init__(self, height, width, color=QColor('white'), direction=RefDirection.DIR_UP):
+        """
+        Constructor to initialize an Arrow Widget
+
+        @param height: height for arrow
+        @param width: width for arrow
+        @param color: arrow fill color
+        @param direction: direction in which the arrow should point 
+        """
         super().__init__()
         self.height = height
         if width <= 0: self.width = self.height
@@ -59,6 +70,11 @@ class ArrowWidget(QWidget):
         self.setMaximumWidth = self.width
 
     def paintEvent(self, event):
+        """
+        Paint Event when widget is being drawn to the display
+        
+        @param event: Event instance
+        """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -97,8 +113,8 @@ class NodeWidget(QWidget):
         super().__init__()
         self.diameter = diameter
         self.border_width = self.diameter*.01 # force border to be 1% of the diameter
-        self.color = color
-        if border_color == None: self.border_color = QColor(self.color)
+        self._color = QColor(color)
+        if border_color == None: self.border_color = QColor(self._color)
         else: self.border_color = QColor(border_color)
         # print(self.border_color,type(self.border_color))
         self.text = str(text)
@@ -108,13 +124,18 @@ class NodeWidget(QWidget):
         self.setFixedSize(diameter, diameter)
 
     def paintEvent(self, event):
+        """
+        Paint Event when widget is being drawn to the display
+        
+        @param event: Event instance
+        """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         pen = QPen(self.border_color, self.border_width)
         painter.setPen(pen)
 
-        brush = QBrush(self.color)
+        brush = QBrush(self._color)
         painter.setBrush(brush)
 
         offset = self.border_width // 2
@@ -133,18 +154,40 @@ class NodeWidget(QWidget):
         text_rect = QRect(0,0, self.diameter, self.diameter)
         painter.drawText(text_rect, Qt.AlignmentFlag.AlignCenter, self.text)  
     
-    def set_fill_color(self, color):
-        """Change the fill color and redraw"""
-        self.fill_color = color
-        self.update()
+    def get_fill_color(self) ->QColor:
+        """
+        Gets the current fill color of the node widget
+        """
+        return self._color
     
+    def _set_fill_color(self, color: QColor):
+        """
+        Sets the new fill color of the node widget
+
+        @param color: desired new color
+        """
+        if self._color != color:
+            self._color = color
+            self.update()
+    
+    # Register the QProperty
+    color = Property(QColor, get_fill_color, _set_fill_color)
+
     def set_border_color(self, color):
-        """Change the border color and redraw"""
+        """
+        Sets the new border color of the node widget
+
+        @param color: desired new color
+        """
         self.border_color = color
         self.update()
 
     def set_text(self, text):
-        """Update the text displayed in the circle"""
+        """
+        Sets the new text within the node widget
+
+        @param text: desired new text
+        """
         self.text = text
         self.update()
 
@@ -212,9 +255,20 @@ class NodeHolderWidget(QWidget):
             self.add_node(n)
 
     def swap_node_data(self, i1, i2):
+        """
+        Swaps the values in the node list/array data
+
+        @param i1: index value to swap for node 1
+        @param i2: index value to swap for node 2
+        """
         self.nodes[i1],self.nodes[i2] = self.nodes[i2],self.nodes[i1]
 
     def print_values(self, arr = None):
+        """
+        Helper method that prints the values of an array
+
+        @param arr: the array/list to print the values of
+        """
         if arr is None: arr = [int(i.text) for i in self.nodes]
         print("[",end='')
         for node in self.nodes:
@@ -222,9 +276,40 @@ class NodeHolderWidget(QWidget):
             else: print(f",{node.text}", end='')
         print("]")
 
+    def color_all_nodes(self, duration: int = 500):
+        """
+        Highlights all nodes once sorting has completed
+
+        @param duration: animation duration in ms
+        """
+        # > NOTE: Due to garbage collection, the animation group
+        # is destroyed once this method is out of scope. However
+        # the animation should still continue. The fix for this was
+        # to maintain the animation group for the class' instance 
+        # existence so the animation continue even after the method 
+        # is removed from the stack (timing issue). 
+        self.parGroupAnim = QParallelAnimationGroup()
+        for n in self.nodes:
+            propAnim = QPropertyAnimation(n, b"color")
+            propAnim.setStartValue(QColor('white'))
+            propAnim.setEndValue(QColor('lightseagreen'))
+            propAnim.setDuration(duration)
+            self.parGroupAnim.addAnimation(propAnim)
+
+        self.parGroupAnim.start()
+
     def swap_nodes(self, i1: int, i2: int, finishedHandler, duration: int = 500):
+        """
+        Runs an animation sequence to swap 2 nodes by index
+
+        @param i1: index for node 1
+        @param i1: index for node 2
+        @param finishedHandler: handler for animation signaling
+        @param duration: duration of animation
+        """
         n1 = self.nodes[i1]
         n2 = self.nodes[i2]
+        
         print(f"Swapping {n1.text} & {n2.text}")
         print("Before:", end='')
         self.print_values()
@@ -233,40 +318,60 @@ class NodeHolderWidget(QWidget):
         x2,y2 = getWidgetPosRef(n2, RefDirection.DIR_DIAG_UP_LEFT,relativeTo=self)
 
         # handle animation
+        self.anim_a0 = QPropertyAnimation(n1, b"color")
         self.anim_a1 = QPropertyAnimation(n1, b"pos") # object to move/animate and the movement type?
         self.anim_a2 = QPropertyAnimation(n1, b"pos")
         self.anim_a3 = QPropertyAnimation(n1, b"pos")
+        self.anim_a4 = QPropertyAnimation(n1, b"color")
         y1_n = y1-n1.height()*2
         print(f"({x1},{y1}) => ({x1},{y1_n})")
+        self.anim_a0.setStartValue(QColor('white'))
+        self.anim_a0.setEndValue(QColor('lightsalmon'))
+        self.anim_a0.setDuration(duration//2)
         self.anim_a1.setEndValue(QPoint(x1,y1_n))
         self.anim_a1.setDuration(500) # in ms
         self.anim_a2.setEndValue(QPoint(x2,y1_n))
         self.anim_a2.setDuration(500) # in ms
         self.anim_a3.setEndValue(QPoint(x2,y1))
         self.anim_a3.setDuration(500) # in ms
+        self.anim_a4.setStartValue(QColor('lightseagreen'))
+        self.anim_a4.setEndValue(QColor('white'))
+        self.anim_a4.setDuration(duration//2)
         # self.anim.start()
         self.groupAnim1 = QSequentialAnimationGroup()
+        self.groupAnim1.addAnimation(self.anim_a0)
         self.groupAnim1.addAnimation(self.anim_a1)
         self.groupAnim1.addAnimation(self.anim_a2)
         self.groupAnim1.addAnimation(self.anim_a3)
+        self.groupAnim1.addAnimation(self.anim_a4)
 
         
+        self.anim_b0 = QPropertyAnimation(n2, b"color")
         self.anim_b1 = QPropertyAnimation(n2, b"pos") # object to move/animate and the movement type?
         self.anim_b2 = QPropertyAnimation(n2, b"pos")
         self.anim_b3 = QPropertyAnimation(n2, b"pos")
+        self.anim_b4 = QPropertyAnimation(n2, b"color")
         y2_n = y2-n2.height()
         print(f"({x2},{y2}) => ({x2},{y2_n})")
+        self.anim_b0.setStartValue(QColor('white'))
+        self.anim_b0.setEndValue(QColor('lightseagreen'))
+        self.anim_b0.setDuration(duration//2)
         self.anim_b1.setEndValue(QPoint(x2,y2_n))
         self.anim_b1.setDuration(500) # in ms
         self.anim_b2.setEndValue(QPoint(x1,y2_n))
         self.anim_b2.setDuration(500) # in ms
         self.anim_b3.setEndValue(QPoint(x1,y1))
         self.anim_b3.setDuration(500) # in ms
+        self.anim_b4.setStartValue(QColor('lightseagreen'))
+        self.anim_b4.setEndValue(QColor('white'))
+        self.anim_b4.setDuration(duration//2)
 
         self.groupAnim2 = QSequentialAnimationGroup()
+        self.groupAnim2.addAnimation(self.anim_b0)
         self.groupAnim2.addAnimation(self.anim_b1)
         self.groupAnim2.addAnimation(self.anim_b2)
         self.groupAnim2.addAnimation(self.anim_b3)
+        self.groupAnim2.addAnimation(self.anim_b4)
         # self.groupAnim2.start()
 
         self.animGroup = QParallelAnimationGroup()
@@ -279,14 +384,13 @@ class NodeHolderWidget(QWidget):
         # 2. Connect the final handler (from MyWidget) to continue the step sequence
         self.animGroup.finished.connect(finishedHandler)
         self.animGroup.start()
-        
 
     def add_node(self, node):
         """
         Add node to holder
         
-        :param self: Description
-        :param node: Description
+        @param self: Description
+        @param node: Description
         """
         self.nodes.append(node)
         self.layout.addWidget(node)
@@ -295,17 +399,15 @@ class NodeHolderWidget(QWidget):
 
     def add_stretch(self):
         """
-        Docstring for add_stretch
+        Stretches the holder dimensions
         
-        :param self: Description
+        @param self: Description
         """
         self.layout.addStretch()
     
     def clear_nodes(self):
         """
-        Docstring for clear_nodes
-        
-        :param self: Description
+        Clears all nodes
         """
         for node in self.nodes:
             self.layout.removeWidget(node)
@@ -315,9 +417,7 @@ class NodeHolderWidget(QWidget):
     
     def get_node(self, index):
         """
-        Docstring for get_node
-        
-        :param self: Description
+        Restrieves node from a given index
         """
         if 0 <= index < len(self.nodes):
             return self.nodes[index]
@@ -326,10 +426,9 @@ class NodeHolderWidget(QWidget):
     
     def paintEvent(self, event):
         """
-        Docstring for paintEvent
+        Paint Event when widget is being drawn to the display
         
-        :param self: Description
-        :param event: Description
+        @param event: Event instance
         """
         painter  = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -349,6 +448,11 @@ class NodeHolderWidget(QWidget):
         painter.drawRoundedRect(rect, 10, 10)
 
     def showEvent(self, event):
+        """
+        Default method for the event when the widget has completely been rendered
+
+        @param event: Event instance
+        """
         # Removes nodes from layout and converts them to absolute positioning.
         # This is done once the widgets are fully rendered and shown to get 
         # the exact x,y position.
@@ -389,7 +493,7 @@ class MyWidget(QWidget):
         """
         self.layout.addWidget(self.button)
         self.holderWidget = NodeHolderWidget(
-            [ random.randint(1,100) for _ in range(5) ],
+            [ random.randint(1,100) for _ in range(4) ],
             spacing=5,
             height=300
         )
@@ -416,8 +520,15 @@ class MyWidget(QWidget):
         self.button.clicked.connect(self.bubble_sort)
 
     def _run_single_anim_step(self):
+        """
+        Runs a single animation step, for better timing control (deterministic)
+        """
         if self.currentAnimStep_Idx >= len(self.animSteps):
             print(" -- Animation Complete -- ")
+            self.arrow1.hide()
+            self.arrow2.hide()
+            PAUSE_MS = 50 
+            QTimer.singleShot(PAUSE_MS, self.holderWidget.color_all_nodes)
             return
 
         op, i1, i2 = self.animSteps[self.currentAnimStep_Idx]
@@ -430,6 +541,9 @@ class MyWidget(QWidget):
 
     @Slot()
     def animStepDone(self):
+        """
+        Triggers when an animation step has completed
+        """
         if self.animGroup and self.animGroup.finished:
             self.animGroup.finished.disconnect(self.animStepDone)
 
@@ -438,6 +552,14 @@ class MyWidget(QWidget):
         QTimer.singleShot(PAUSE_MS, self._run_single_anim_step)
 
     def moveArrows(self, i1: int = -1, i2: int = -1, duration: int = 100, nextAction = None):
+        """
+        Moves arrows to highlight nodes being actively compared
+
+        @param i1: index of node1 to point to
+        @param i2: index of node2 to point to
+        @param duration: Duration for animation
+        @param nextAction: pointer to the next animation action to take
+        """
         if i1 < 0: i1 = self.arrow1_i1
         if i2 < 0: i2 = self.arrow1_i2
         
@@ -473,6 +595,11 @@ class MyWidget(QWidget):
     # > NOTE: The show event is called once the widget has already rendered, and 
     #         positions (coordinates) can be referenced.
     def showEvent(self, event):
+        """
+        Default method for the event when the widget has completely been rendered
+
+        @param event: Event instance
+        """
         print("Arrow original position:", self.arrow1.pos()) # return (0,0), appears relative to default location.
         print("Arrow geometry:", self.arrow1.geometry())
         x,y = self.start_ref_pos = getWidgetPosRef(self.holderWidget.nodes[0],RefDirection.DIR_DOWN,self)
@@ -483,9 +610,8 @@ class MyWidget(QWidget):
     @Slot()
     def bubble_sort(self):
         """
-        Updates text for text widget
+        Runs bubble sort algorithm to sort an array/list in an increasing numerical order
         
-        :param self: Description
         """
         self.animSteps = []
         temp_data = [int(n.text) for n in self.holderWidget.nodes]
@@ -521,7 +647,7 @@ class MyWidget(QWidget):
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
     widget = MyWidget()
-    widget.resize(800,600)
+    widget.resize(720,1080)
     widget.show()
 
     sys.exit(app.exec())
