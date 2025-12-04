@@ -1,9 +1,10 @@
 import sys
 import random
+import time
 from enum import Enum
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
-from PySide6.QtCore import Qt, Slot, QRect, QAnimationGroup, QParallelAnimationGroup, QPoint, QPropertyAnimation, QSequentialAnimationGroup
+from PySide6.QtCore import Qt, Slot, QRect, QTimer, QParallelAnimationGroup, QPoint, QPropertyAnimation, QSequentialAnimationGroup
 from PySide6.QtGui import QPainter, QPainterPath, QPen, QBrush, QColor, QFont
 
 class RefDirection(Enum):
@@ -167,7 +168,8 @@ class NodeHolderWidget(QWidget):
         if orientation == 'horizontal': self.layout = QHBoxLayout(self)
         elif orientation == 'vertical': self.layout = QVBoxLayout(self)
 
-        self.layout.setSpacing(spacing)
+        self.spacing = spacing
+        self.layout.setSpacing(self.spacing)
         self.layout.setContentsMargins(padding, padding, padding, padding)
         # the line below helped avoid the horizontal and veritcal alignment
         # > NOTE: This must be set after the contents margins has been set
@@ -200,7 +202,7 @@ class NodeHolderWidget(QWidget):
          'teal', 'thistle', 'tomato', 'transparent', 'turquoise', 'violet', 'wheat', 'white', 
          'whitesmoke', 'yellow', 'yellowgreen']
         """
-        rand_color = random.randint(0, len(dflt_QtColors))
+        rand_color = random.randint(0, len(dflt_QtColors)-1)
         rand_color = dflt_QtColors[rand_color]
         print("Random color selected:", rand_color)
 
@@ -209,14 +211,18 @@ class NodeHolderWidget(QWidget):
             n = NodeWidget(height//4, text=v)
             self.add_node(n)
 
-    def print_values(self):
+    def swap_node_data(self, i1, i2):
+        self.nodes[i1],self.nodes[i2] = self.nodes[i2],self.nodes[i1]
+
+    def print_values(self, arr = None):
+        if arr is None: arr = [int(i.text) for i in self.nodes]
         print("[",end='')
         for node in self.nodes:
             if node == self.nodes[0]: print(node.text, end='')
             else: print(f",{node.text}", end='')
         print("]")
 
-    def swap_nodes(self, i1: int, i2: int):
+    def swap_nodes(self, i1: int, i2: int, finishedHandler, duration: int = 500):
         n1 = self.nodes[i1]
         n2 = self.nodes[i2]
         print(f"Swapping {n1.text} & {n2.text}")
@@ -243,7 +249,6 @@ class NodeHolderWidget(QWidget):
         self.groupAnim1.addAnimation(self.anim_a1)
         self.groupAnim1.addAnimation(self.anim_a2)
         self.groupAnim1.addAnimation(self.anim_a3)
-        self.groupAnim1.start()
 
         
         self.anim_b1 = QPropertyAnimation(n2, b"pos") # object to move/animate and the movement type?
@@ -262,11 +267,19 @@ class NodeHolderWidget(QWidget):
         self.groupAnim2.addAnimation(self.anim_b1)
         self.groupAnim2.addAnimation(self.anim_b2)
         self.groupAnim2.addAnimation(self.anim_b3)
-        self.groupAnim2.start()
+        # self.groupAnim2.start()
 
-        self.nodes[i1], self.nodes[i2] = self.nodes[i2], self.nodes[i1]
-        print("After:", end='')
-        self.print_values()
+        self.animGroup = QParallelAnimationGroup()
+        self.animGroup.addAnimation(self.groupAnim1)
+        self.animGroup.addAnimation(self.groupAnim2)
+
+        # 1. Once animations are done, perform the logical swap in the list
+        self.animGroup.finished.connect(lambda: self.swap_node_data(i1, i2))
+        
+        # 2. Connect the final handler (from MyWidget) to continue the step sequence
+        self.animGroup.finished.connect(finishedHandler)
+        self.animGroup.start()
+        
 
     def add_node(self, node):
         """
@@ -350,11 +363,20 @@ class MyWidget(QWidget):
     """
     Demo custom widget class: MyWidget
     """
+    class AnimationOpt(Enum):
+        """
+        Animation Options
+        """
+        COMPARE = 0,
+        SWAP = 1
+
     def __init__(self):
         """
         Constructor for Custom widget basics
         """
         super().__init__()
+        self.currentAnimStep_Idx = 0
+        self.animSteps = []
         """
         self.hello = ["Hello", "blah", "hah", "my nigga"]
 
@@ -374,44 +396,127 @@ class MyWidget(QWidget):
         self.layout.addWidget(self.holderWidget)
 
         self.arrow1 = ArrowWidget(height=30, width=30, color=QColor('green'))
-        self.layout.addWidget(self.arrow1)
+        self.arrow1.setParent(self)
+        self.arrow1.move(0,0)
+        self.arrow1.show()
+        self.arrow1_i1 = 0
+
         self.arrow2 = ArrowWidget(height=30, width=30, color=QColor('orange'))
-        self.layout.addWidget(self.arrow2)
+        self.arrow2.setParent(self)
+        self.arrow2.move(0,0)
+        self.arrow2.show()
+        self.arrow1_i2 = 1
 
         self.holderWidget.print_values()
+
+        self.animGroup = None
+        self.animStep = 0
+        self.animMaxSteps = 1   # forces the animation to only run once
         
-        self.button.clicked.connect(self.magic)
+        self.button.clicked.connect(self.bubble_sort)
+
+    def _run_single_anim_step(self):
+        if self.currentAnimStep_Idx >= len(self.animSteps):
+            print(" -- Animation Complete -- ")
+            return
+
+        op, i1, i2 = self.animSteps[self.currentAnimStep_Idx]
+        self.currentAnimStep_Idx+=1
+
+        if op == self.AnimationOpt.COMPARE:
+            self.moveArrows(i1,i2,500,nextAction=self.animStepDone)
+        else:
+            self.holderWidget.swap_nodes(i1,i2,self.animStepDone)
+
+    @Slot()
+    def animStepDone(self):
+        if self.animGroup and self.animGroup.finished:
+            self.animGroup.finished.disconnect(self.animStepDone)
+
+        PAUSE_MS = 500
+
+        QTimer.singleShot(PAUSE_MS, self._run_single_anim_step)
+
+    def moveArrows(self, i1: int = -1, i2: int = -1, duration: int = 100, nextAction = None):
+        if i1 < 0: i1 = self.arrow1_i1
+        if i2 < 0: i2 = self.arrow1_i2
+        
+        spc = self.holderWidget.spacing
+        self.animGroup = QParallelAnimationGroup()
+        
+        # n1, n2 = self.holderWidget.nodes[i1], self.holderWidget.nodes[i2]
+        # --- Arrow 1 Animation --- #
+        anim1 = QPropertyAnimation(self.arrow1, b"pos") # object to move/animate and the movement type?
+
+        x,y = self.start_ref_pos
+        x += i1*(self.holderWidget.nodes[0].width() + spc)
+        print(f"n1[{i1}], x: {x}, y: {y} - ", end="")
+        anim1.setEndValue(QPoint(x-self.arrow1.width//2,y))
+        anim1.setDuration(duration) # in ms
+        
+        # --- Arrow 2 Animation --- #
+        x,y = self.start_ref_pos
+        x += i2*(self.holderWidget.nodes[0].width() + spc)
+        print(f"n2[{i2}]",x,y)
+        anim2 = QPropertyAnimation(self.arrow2, b"pos") # object to move/animate and the movement type?
+        anim2.setEndValue(QPoint(x-self.arrow1.width//2,y))
+        anim2.setDuration(duration) # in ms
+        
+        self.animGroup.addAnimation(anim1)
+        self.animGroup.addAnimation(anim2)
+
+        if nextAction: self.animGroup.finished.connect(nextAction)
+
+        self.animGroup.start()
+
 
     # > NOTE: The show event is called once the widget has already rendered, and 
     #         positions (coordinates) can be referenced.
     def showEvent(self, event):
         print("Arrow original position:", self.arrow1.pos()) # return (0,0), appears relative to default location.
         print("Arrow geometry:", self.arrow1.geometry())
-        # animation working, TODO: trigger repeatedly 
-        self.anim = QPropertyAnimation(self.arrow1, b"pos") # object to move/animate and the movement type?
-
-        x,y = getWidgetPosRef(self.holderWidget.nodes[0], RefDirection.DIR_DOWN, self)
-        print(x,y)
-        self.anim.setEndValue(QPoint(x-self.arrow1.width//2,y))
-        self.anim.setDuration(2000) # in ms
-        self.anim.start()
-        
-        x,y = getWidgetPosRef(self.holderWidget.nodes[2], RefDirection.DIR_DOWN, self)
-        self.anim2 = QPropertyAnimation(self.arrow2, b"pos") # object to move/animate and the movement type?
-        self.anim2.setEndValue(QPoint(x-self.arrow1.width//2,y))
-        self.anim2.setDuration(2000) # in ms
-        self.anim2.start()
+        x,y = self.start_ref_pos = getWidgetPosRef(self.holderWidget.nodes[0],RefDirection.DIR_DOWN,self)
+        print(x,y) 
+        self.arrow1.move(x-self.arrow1.width//2, y)
+        self.arrow2.move(x+2*(self.holderWidget.nodes[0].width()//2+self.holderWidget.spacing//2)-self.arrow1.width//2, y)
 
     @Slot()
-    def magic(self):
+    def bubble_sort(self):
         """
         Updates text for text widget
         
         :param self: Description
         """
+        self.animSteps = []
+        temp_data = [int(n.text) for n in self.holderWidget.nodes]
         print("Clicked")
         # self.text.setText(random.choice(self.hello))
-        self.holderWidget.swap_nodes(0,1)
+        N = len(self.holderWidget.nodes)
+        print("Before:", end='')
+        self.holderWidget.print_values()
+
+        for i in range(N-1):
+            for j in range(N-1-i):
+                self.animSteps.append((self.AnimationOpt.COMPARE, j, j+1))
+                n1, n2 = temp_data[j], temp_data[j+1]
+                if n1 > n2:
+                    temp_data[j], temp_data[j+1] = temp_data[j+1], temp_data[j]
+                    self.animSteps.append((self.AnimationOpt.SWAP, j, j+1))
+                    # self.holderWidget.nodes[j], self.holderWidget.nodes[j+1] = self.holderWidget.nodes[j+1], self.holderWidget.nodes[j]
+
+                    print(f"\t\tafter swap:", end='')
+                    self.holderWidget.print_values()
+
+            print(f"\tafter iteration[{i+1}]:", end='')
+            self.holderWidget.print_values(arr=temp_data)
+
+        print("Done sorting, final array:", end='')
+        self.holderWidget.print_values(arr=temp_data)
+
+        for x in self.animSteps:
+            print("\t-",x)
+        self.currentAnimStep_Idx = 0
+        self._run_single_anim_step()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
