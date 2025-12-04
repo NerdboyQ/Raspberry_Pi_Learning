@@ -486,8 +486,13 @@ class MyWidget(QWidget):
 
         self.text = QtWidgets.QLabel("Hello World", alignment=Qt.AlignmentFlag.AlignCenter)
         """
-        self.button = QtWidgets.QPushButton("Run Bubble Sort!")
         self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(10, 20, 10, 0)
+        
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        self.button = QtWidgets.QPushButton("Run Bubble Sort!")
         """
         self.layout.addWidget(self.text)
         """
@@ -516,7 +521,8 @@ class MyWidget(QWidget):
         self.animGroup = None
         self.animStep = 0
         self.animMaxSteps = 1   # forces the animation to only run once
-        
+
+        # self.layout.addStretch()
         self.button.clicked.connect(self.bubble_sort)
 
     def _run_single_anim_step(self):
