@@ -1,5 +1,58 @@
 #include "DFRobot_RGBPanel.h"
 
+DFRobot_RGBPanel_img_t* RGBPanel_img_init(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t *data) {
+    // Verify valid dimensions and position
+    if (!(width*height) || width > RGBPANEL_MAX_W || height > RGBPANEL_MAX_H) {
+        printf("Invalid image dimensions: width=%d, height=%d\n", width, height);
+        return NULL;
+    }
+    if (!(x*y) || x >= RGBPANEL_MAX_W || y >= RGBPANEL_MAX_H || (x + width) > RGBPANEL_MAX_W || (y + height) > RGBPANEL_MAX_H) {
+        printf("Invalid image position: x=%d, y=%d\n", x, y);
+        return NULL;
+    }
+
+    // Verify that the data pointer is not NULL and that the color values are valid
+    if (!data) {
+        printf("Data pointer is NULL for image at (%d, %d) with dimensions (%d, %d)\n", x, y, width, height);
+        return NULL;
+    }
+    for (int i=0; i < height*width; i++) {
+        if (!IS_VALID_COLOR(data[i])) {
+            printf("Invalid color value %d at index %d for image at (%d, %d) with dimensions (%d, %d)\n", data[i], i, x, y, width, height);
+            return NULL;
+        }
+    }
+
+    DFRobot_RGBPanel_img_t *img = (DFRobot_RGBPanel_img_t *)malloc(sizeof(DFRobot_RGBPanel_img_t));
+    if (!img) {
+        printf("Memory allocation failed for image at (%d, %d) with dimensions (%d, %d)\n", x, y, width, height);
+        return NULL;
+    }
+    
+    img->x = x;
+    img->y = y;
+    img->width = width;
+    img->height = height;
+    img->data = data;
+    return img;
+}
+
+void RGBPanel_img_destroy(DFRobot_RGBPanel_img_t *img) {
+    if (!img) return;
+    img->data = NULL;
+    free(img);
+}
+
+void RGBPanel_img_draw(DFRobot_RGBPanel_t *panel, DFRobot_RGBPanel_img_t *img) {
+    if (!panel || !img) return;
+
+    for (uint8_t row = 0; row < img->height; row++) {
+        for (uint8_t col = 0; col < img->width; col++) {
+            uint8_t color = img->data[row * img->width + col];
+            RGBPanel_pixel(panel, img->x + col, img->y + row, color);
+        }
+    }
+}
 
 void RGBPanel_init(DFRobot_RGBPanel_t *panel, i2c_inst_t *i2c, uint8_t addr) {
     if (!panel) return;
@@ -71,4 +124,12 @@ void RGBPanel_pixel(DFRobot_RGBPanel_t *panel, unsigned char x, unsigned char y,
     panel->buf[3] = y;
     RGBPanel_setReg(panel, FUNC, panel->buf, SIZE);   // full buffer every call
     sleep_ms(RGB_W_MIN_DELAY); // small delay to ensure the command is processed
+}
+
+void RGBPanel_display(DFRobot_RGBPanel_t *panel, unsigned char picIndex, unsigned char color) {
+    panel->buf[0] = (panel->buf[0] & 0xe6) | (0x02 << 3); // Set the PIX_ENABLE bit
+    panel->buf[1] = color; // Set the color for the display
+    panel->buf[4] = picIndex; // Set the picture index to display
+    RGBPanel_setReg(panel, FUNC, panel->buf, SIZE); // Send the command to the panel
+    sleep_ms(SIZE * RGB_W_MIN_DELAY); // Delay to ensure the command is processed
 }
