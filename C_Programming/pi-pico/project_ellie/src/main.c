@@ -76,6 +76,44 @@ void scan_i2c_bus() {
     fflush(stdout);
 }
 
+uint8_t color;
+    uint8_t img = 0;
+    DFRobot_RGBPanel_img_t test_img1 = (DFRobot_RGBPanel_img_t){
+        .x = 1,
+        .y = 1,
+        .width = 3,
+        .height = 3,
+        .data = (uint8_t[]){
+            RED, RED, RED, 
+            RED, QUENCH, RED,
+            RED, RED, RED
+        }
+    };
+    
+    DFRobot_RGBPanel_img_t test_img2 = (DFRobot_RGBPanel_img_t){
+        .x = 12,
+        .y = 1,
+        .width = 3,
+        .height = 3,
+        .data = (uint8_t[]){
+            CYAN, QUENCH, CYAN, 
+            QUENCH, CYAN, QUENCH,
+            CYAN, QUENCH, CYAN
+        }
+    };
+
+    DFRobot_RGBPanel_img_t test_img3 = (DFRobot_RGBPanel_img_t){
+        .x = 1,
+        .y = 6,
+        .width = 14,
+        .height = 2,
+        .data = (uint8_t[]){
+            WHITE, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, QUENCH, WHITE,
+            QUENCH, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, QUENCH,
+        }
+    };
+
+
 int main() {
     stdio_init_all();
     sleep_ms(5000); // Wait for USB to be connected
@@ -105,22 +143,26 @@ int main() {
     // RGBPanel_pixel(&rgb_panel, 15, 7, 0x02); // Set pixel at (15,7) to GREEN
     // Fill screen with RED (0x01)
     // RGBPanel_fillAll(&rgb_panel, RED);
-    uint8_t color = 0x00; // RED
+    uint8_t color = 0x00; // RED0
+
+    RGBPanel_img_draw(&rgb_panel, &test_img1);
+    RGBPanel_img_draw(&rgb_panel, &test_img2);
+    RGBPanel_img_draw(&rgb_panel, &test_img3);
     while (true) {
         printf("Hello, world! Color: 0x%02X\n", color);
         // for (uint8_t y = 0; y < 8; y++) {
-            for (uint8_t x = 0; x < 16; x++) {
-                RGBPanel_pixel(&rgb_panel, x, color, 0x04);
-            }
+            // for (uint8_t x = 0; x < 16; x++) {
+            //     RGBPanel_pixel(&rgb_panel, x, color, 0x04);
+            // }
         // }
 
         color = (color + 1) % 8; // Cycle through colors 0-7
         
         sleep_ms(1000);
 
-        if (color == 0) {
-            RGBPanel_clear(&rgb_panel); // Clear the panel when cycling back to 0
-            sleep_ms(500);
-        }
+        // if (color == 0) {
+        //     RGBPanel_clear(&rgb_panel); // Clear the panel when cycling back to 0
+        //     sleep_ms(500);
+        // }
     }
 }
