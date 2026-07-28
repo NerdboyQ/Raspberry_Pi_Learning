@@ -45,6 +45,11 @@
 // This delay was used for 1MHz I2C speed
 #define RGB_W_MIN_DELAY 5
 
+#define RGBPANEL_MAX_H (8)
+#define RGBPANEL_MAX_W (16)
+
+#define IS_VALID_COLOR(c) ((c) >= 0 && (c) <= 7)
+
 /**
  * @brief Structure representing the DFRobot RGB Panel.
  * 
@@ -56,6 +61,47 @@ typedef struct {
     uint8_t i2c_addr;
     unsigned char buf[SIZE];
 } DFRobot_RGBPanel_t;
+
+/**
+ * @brief Structure representing an image for the DFRobot RGB Panel.
+ */
+typedef struct {
+    uint8_t x; // X-coordinate of the image's top-left corner
+    uint8_t y;  // Y-coordinate of the image's top-left corner
+    uint8_t width; // in pixels
+    uint8_t height; // in pixels
+    uint8_t *data; // pointer to pixel data as colors
+} DFRobot_RGBPanel_img_t;
+
+/**
+ * @brief Initializes an image for the DFRobot RGB Panel.
+ * 
+ * @param x X-coordinate of the image's top-left corner.
+ * @param y Y-coordinate of the image's top-left corner.
+ * @param width Width of the image in pixels.
+ * @param height Height of the image in pixels.
+ * @param data Pointer to the pixel data for the image. Each pixel should be represented by a color value (0-7).
+ * 
+ * @return Pointer to the initialized DFRobot_RGBPanel_img_t structure, or NULL if initialization fails.
+ */
+DFRobot_RGBPanel_img_t* RGBPanel_img_init(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t *data);
+
+/**
+ * @brief Destroys an image for the DFRobot RGB Panel.
+ * 
+ * @param img Pointer to the DFRobot_RGBPanel_img_t structure to destroy.
+ * 
+ */
+void RGBPanel_img_destroy(DFRobot_RGBPanel_img_t *img); // Frees the memory allocated for the image
+
+/**
+ * @brief Draws an image on the DFRobot RGB Panel.
+ * 
+ * @param panel Pointer to the DFRobot_RGBPanel_t structure representing the RGB panel.
+ * @param img Pointer to the DFRobot_RGBPanel_img_t structure representing the image to draw.
+ * 
+ */
+void RGBPanel_img_draw(DFRobot_RGBPanel_t *panel, DFRobot_RGBPanel_img_t *img);
 
 /**
  * @brief Initializes the DFRobot RGB Panel.
