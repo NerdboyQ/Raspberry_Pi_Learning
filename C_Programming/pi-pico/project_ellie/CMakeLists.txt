@@ -42,6 +42,11 @@ if (TARGET tinyusb_device)
 
     target_sources(hello_usb PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/include/DFRobot_RGBPanel/DFRobot_RGBPanel.c
+        ${CMAKE_CURRENT_LIST_DIR}/include/Display/graphics.c
+        ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789.c
+        ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789_basic.c
+        ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789_interface_template.c
+        ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/spi_interface/spi_interface.c
     )
 
     # pull in common dependencies
