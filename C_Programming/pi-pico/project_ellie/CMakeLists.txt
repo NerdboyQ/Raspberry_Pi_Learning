@@ -28,7 +28,7 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(hello_usb C CXX ASM)
+project(proj_ellie C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -36,11 +36,11 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 if (TARGET tinyusb_device)
-    add_executable(hello_usb
-            hello_usb.c
+    add_executable(proj_ellie
+            src/main.c
             )
 
-    target_sources(hello_usb PRIVATE
+    target_sources(proj_ellie PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/include/DFRobot_RGBPanel/DFRobot_RGBPanel.c
         ${CMAKE_CURRENT_LIST_DIR}/include/Display/graphics.c
         ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789.c
@@ -50,29 +50,29 @@ if (TARGET tinyusb_device)
     )
 
     # pull in common dependencies
-    target_link_libraries(hello_usb 
+    target_link_libraries(proj_ellie 
         pico_stdlib)
 
-    target_include_directories(hello_usb PRIVATE
+    target_include_directories(proj_ellie PRIVATE
         ${CMAKE_CURRENT_LIST_DIR} 
         ${CMAKE_CURRENT_LIST_DIR}/libs
         ${CMAKE_CURRENT_LIST_DIR}/include
     )
 
-    target_link_libraries(hello_usb
+    target_link_libraries(proj_ellie
         hardware_spi
         hardware_i2c
         pico_cyw43_arch_none    
     )
 
     # enable usb output, disable uart output
-    pico_enable_stdio_usb(hello_usb 1)
-    pico_enable_stdio_uart(hello_usb 0)
+    pico_enable_stdio_usb(proj_ellie 1)
+    pico_enable_stdio_uart(proj_ellie 0)
 
     # create map/bin/hex/uf2 file etc.
-    pico_add_extra_outputs(hello_usb)
+    pico_add_extra_outputs(proj_ellie)
 
     # add url via pico_set_program_url
 elseif(PICO_ON_DEVICE)
-    message("Skipping hello_usb because TinyUSB submodule is not initialized in the SDK")
+    message("Skipping proj_ellie because TinyUSB submodule is not initialized in the SDK")
 endif()
