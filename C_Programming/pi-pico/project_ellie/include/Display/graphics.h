@@ -19,7 +19,7 @@ typedef struct {
  * @brief Structure representing a sprite/gif-frame with image data, dimensions, and position.
  */
 typedef struct {
-    uint16_t *img;
+    const uint16_t *img;
 	// Color Sprites/Frames will be RGB565 format (2 bytes/pixel)
     uint16_t array_length;
     sprite_dimensions_t dimensions;
@@ -32,7 +32,7 @@ typedef struct {
 typedef struct {
 	// Title of the gif (up to 31 characters + null terminator)
 	uint8_t title[32];
-    sprite_t *frames[GIF_MAX_FRAME_CNT];
+    const sprite_t *frames;
 	// Color Sprites/Frames will be RGB565 format (2 bytes/pixel)
     uint16_t frame_cnt;
 } gif_t;
@@ -127,7 +127,7 @@ static uint16_t nerdboyq_alien_demo[32 * 32]   = {
  * Create sprite
  * 
  */
-bool sprite_create(sprite_t *sprite, uint16_t *img, uint16_t N, uint16_t width, uint16_t height);
+bool sprite_create(sprite_t *sprite, const uint16_t *img, uint16_t N, uint16_t width, uint16_t height);
 
 /**
  * Draw sprite
