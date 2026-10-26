@@ -5,7 +5,7 @@
  * Create sprite
  * 
  */
-bool sprite_create(sprite_t *sprite, uint16_t *img, uint16_t N, uint16_t width, uint16_t height) {
+bool sprite_create(sprite_t *sprite, const uint16_t *img, uint16_t N, uint16_t width, uint16_t height) {
     sprite->dimensions = (sprite_dimensions_t) {
         .width = width,
         .height = height
@@ -244,28 +244,4 @@ bool test_spi_display() {
     printf("All tests complete!\n");
 
     return false;
-}
-
-
-void generate_neko_gif() {
-    neko_gif = (gif_t){
-        .title = "neko",
-        .frames = {},
-        .frame_cnt = GIF_MAX_FRAME_CNT
-    };
-
-    for (int i = 0; i < GIF_MAX_FRAME_CNT; i++) {
-        neko_gif.frames[i]->img = anime_neko_bitmap_allArray[i];
-        neko_gif.frames[i]->array_length = (GIF_MAX_W * GIF_MAX_H);
-        neko_gif.frames[i]->dimensions = (sprite_dimensions_t) {
-            .width = GIF_MAX_W,
-            .height = GIF_MAX_H
-        };
-        neko_gif.frames[i]->position = (sprite_position_t) {
-            .left = 0,
-            .top = 0,
-            .right = GIF_MAX_W - 1,
-            .bottom = GIF_MAX_H - 1
-        };
-    }
 }
