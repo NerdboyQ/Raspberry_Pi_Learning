@@ -886,7 +886,7 @@ uint8_t st7789_draw_picture_12bits(st7789_handle_t *handle, uint16_t left, uint1
  *            - 9 top > bottom
  * @note      left <= column && right <= column && left <= right && top <= row && bottom <= row && top <= bottom
  */
-uint8_t st7789_draw_picture_16bits(st7789_handle_t *handle, uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint16_t *image);
+uint8_t st7789_draw_picture_16bits(st7789_handle_t *handle, uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, const uint16_t *image);
 
 /**
  * @brief     draw a picture
