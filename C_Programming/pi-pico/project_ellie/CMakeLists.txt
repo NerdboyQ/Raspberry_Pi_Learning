@@ -60,6 +60,8 @@ if (TARGET tinyusb_device)
     )
 
     target_link_libraries(proj_ellie
+        hardware_flash
+        pico_flash
         hardware_spi
         hardware_i2c
         pico_cyw43_arch_none    
