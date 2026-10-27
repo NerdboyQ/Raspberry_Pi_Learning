@@ -3,13 +3,84 @@
 
 #include "libs/st7789/spi_interface/spi_interface.h"
 
-#define GIF_MAX_W 32
-#define GIF_MAX_H 32
-#define GIF_MAX_FRAME_CNT 10
+#define GIF_MAX_W _u(32)
+#define GIF_MAX_H _u(32)
+#define GIF_MAX_FRAME_CNT _u(10)
+
+/**
+ * @brief Flash GIF frame span
+ * 
+ * This defines the size of each GIF frame in flash memory.
+ * 0x5000 corresponds to 20kB, allowing for a maximum of 10 frames.
+ */
+#define FLASH_GIF_FRAME_SPAN _u(0x5000)
+#define FLASH_GIF_META_BASE (FLASH_RW_BASE + FLASH_GIF_FRAME_SPAN * GIF_MAX_FRAME_CNT)
+#define FLASH_GIF_META_SPAN _u(0x20)
+
+/**
+ * @brief Calculate the flash address for a given GIF frame index.
+ * 
+ * @param frame_idx The index of the GIF frame.
+ * @return The absolute flash address of the frame.
+ * @note The frame index should be in the range [0, GIF_MAX_FRAME_CNT - 1].
+ */
+#define FLASH_GIF_ADDRESS(frame_idx) (FLASH_RW_BASE + FLASH_GIF_FRAME_SPAN * (frame_idx))
+
+/**
+ * @brief Calculate the flash address for a given GIF metadata index.
+ * 
+ * @param meta_idx The index of the GIF metadata.
+ * @return The absolute flash address of the metadata.
+ * @note The metadata index should be in the range [0, GIF_MAX_FRAME_CNT - 1].
+ */
+#define FLASH_GIF_META_ADDRESS(meta_idx) (FLASH_GIF_META_BASE + FLASH_GIF_META_SPAN * (meta_idx))
+
+/**
+ * NOTES:
+ *  element     absolute     physical    offset
+ * ===========================================
+ * gif_base_0	270008320	0x10180000	0x180000
+ * gif_base_1	270028800	0x10185000	0x185000
+ * gif_base_2	270049280	0x1018A000	0x18A000
+ * gif_base_3	270069760	0x1018F000	0x18F000
+ * gif_base_4	270090240	0x10194000	0x194000
+ * gif_base_5	270110720	0x10199000	0x199000
+ * gif_base_6	270131200	0x1019E000	0x19E000
+ * gif_base_7	270151680	0x101A3000	0x1A3000
+ * gif_base_8	270172160	0x101A8000	0x1A8000
+ * gif_base_9	270192640	0x101AD000	0x1AD000
+ * gif_meta_0	270213120	0x101B2000	0x1B2000
+ * gif_meta_1	270213152	0x101B2020	0x1B2020
+ * gif_meta_2	270213184	0x101B2040	0x1B2040
+ * gif_meta_3	270213216	0x101B2060	0x1B2060
+ * gif_meta_4	270213248	0x101B2080	0x1B2080
+ * gif_meta_5	270213280	0x101B20A0	0x1B20A0
+ * gif_meta_6	270213312	0x101B20C0	0x1B20C0
+ * gif_meta_7	270213344	0x101B20E0	0x1B20E0
+ * gif_meta_8	270213376	0x101B2100	0x1B2100
+ * gif_meta_9	270213408	0x101B2120	0x1B2120
+ * ssid_name    270213440	0x101B2140	0x1B2140
+ * wifi_pass	270213472	0x101B2160	0x1B2160
+ */
+
+ #pragma pack(push, 1)
+
+/**
+ * @brief Metadata for a GIF, including title, frame count, and dimensions.
+ * 32bytes in total size
+ */
+typedef struct {
+    uint8_t title[29];
+    uint8_t frame_cnt, width, height;
+} gif_meta_t;
+
+#pragma pack(pop)
 
 typedef struct {
     uint16_t height, width;
 } sprite_dimensions_t;
+
+
 
 typedef struct {
     uint16_t left, top, right, bottom;
