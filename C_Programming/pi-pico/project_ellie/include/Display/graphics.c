@@ -5,7 +5,7 @@
  * Create sprite
  * 
  */
-bool sprite_create(sprite_t *sprite, const uint16_t *img, uint16_t N, uint16_t width, uint16_t height) {
+bool sprite_create(sprite_t *sprite, uint16_t *img, uint16_t N, uint16_t width, uint16_t height) {
     sprite->dimensions = (sprite_dimensions_t) {
         .width = width,
         .height = height
