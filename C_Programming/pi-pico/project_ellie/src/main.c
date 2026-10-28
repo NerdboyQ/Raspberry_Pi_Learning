@@ -4,29 +4,31 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-// #include <stdio.h>
+#include "main.h"
 
-#include "DFRobot_RGBPanel/DFRobot_RGBPanel.h"
-#include "Display/graphics.h"
+void load_anime_neko_bitmaps() {
+    memcpy(ld_buf,anime_neko_bitmap_01,(FLASH_SECTOR_SIZE>>1));
+    memcpy(ld_buf + (FLASH_SECTOR_SIZE>>1),anime_neko_bitmap_02,(FLASH_SECTOR_SIZE>>1));
+}
 
-// SPI Defines
-// We are going to use SPI 0, and allocate it to the following GPIO pins
-// Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
-#define SPI_PORT spi0
-#define PIN_MISO (4)
-#define PIN_CS   (5)
-#define PIN_SCK  (2)
-#define PIN_MOSI (3)
+bool test_write_flash_data(uint32_t addr) {
+    // Check if the flash already contains the data
+    if (!memcmp(ld_buf, (uint32_t*)FLASH_RW_BASE, FLASH_SECTOR_SIZE)) return true;
+    
+    // Disable interrupts to ensure atomic flash write operations
+    uint32_t intr = save_and_disable_interrupts();
 
-// I2C defines
-// This example will use I2C0 on GPIO8 (SDA) and GPIO9 (SCL) running at 400KHz.
-// Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
-#define I2C_PORT i2c0
-#define I2C_SDA (8)
-#define I2C_SCL (9)
+    // Erase flash area before writing new data
+    flash_range_erase(FLASH_GIF_ADDRESS(0), FLASH_SECTOR_SIZE);
 
-DFRobot_RGBPanel_t rgb_panel;
-static st7789_handle_t gs_handle;        /**< st7789 handle */
+    // this write the 1st 2 neko bitmaps to flash
+    flash_range_program(FLASH_GIF_ADDRESS(0), ld_buf, FLASH_SECTOR_SIZE);
+
+    // Restore interrupts after flash write operations
+    restore_interrupts(intr);
+
+    return false;
+}
 
 /**
  * Initializes the SPI interface at 1MHz, and configure
@@ -190,18 +192,23 @@ int main() {
     RGBPanel_img_draw(&rgb_panel, &test_img2);
     RGBPanel_img_draw(&rgb_panel, &test_img3);
     
-    test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
+    // test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
+    load_anime_neko_bitmaps();
+    test_write_flash_data(FLASH_RW_BASE);
+
+    // TODO: create 16bit RGB565 draw for direct FLASH read
+
     while (true) {
-        printf("Hello, world! Color: 0x%02X\n", color);
+        // printf("Hello, world! Color: 0x%02X\n", color);
         // for (uint8_t y = 0; y < 8; y++) {
             // for (uint8_t x = 0; x < 16; x++) {
             //     RGBPanel_pixel(&rgb_panel, x, color, 0x04);
             // }
         // }
 
-        color = (color + 1) % 8; // Cycle through colors 0-7
+        // color = (color + 1) % 8; // Cycle through colors 0-7
         
-        sleep_ms(1000);
+        // sleep_ms(1000);
 
         // if (color == 0) {
         //     RGBPanel_clear(&rgb_panel); // Clear the panel when cycling back to 0
