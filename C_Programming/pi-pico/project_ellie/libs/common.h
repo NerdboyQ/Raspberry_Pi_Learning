@@ -7,12 +7,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "hardware/flash.h"
 #include "pico/flash.h"
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
-#include "hardware/spi.h"
+#include "hardware/flash.h"
 #include "hardware/i2c.h"
+#include "hardware/spi.h"
+#include "hardware/sync.h"
 
 /**
  * @brief Flash read/write base address, this will
