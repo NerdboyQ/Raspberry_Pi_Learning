@@ -5,7 +5,7 @@
 
 #define GIF_MAX_W _u(0x80) // 128 pixels
 #define GIF_MAX_H _u(0x80) // 128 pixels
-#define GIF_MAX_FRAME_CNT _u(1)
+#define GIF_MAX_FRAME_CNT _u(10)
 
 /**
  * @brief Flash GIF frame span

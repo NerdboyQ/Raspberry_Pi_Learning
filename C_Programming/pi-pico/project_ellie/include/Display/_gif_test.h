@@ -10274,7 +10274,7 @@ static uint16_t jabber_frame_006 [] = {
 };
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in = 164000)
-static uint16_t* jabber_allArray[10] = {
+static uint16_t* jabber_allArray[] = {
 	jabber_frame_000,
 	jabber_frame_001,
 	jabber_frame_002,

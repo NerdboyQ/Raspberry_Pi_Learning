@@ -6,14 +6,9 @@
 
 #include "main.h"
 
-void load_anime_neko_bitmaps() {
-    memcpy(ld_buf, jabber_frame_000, (FLASH_GIF_FRAME_SPAN));
-    // memcpy(ld_buf + (FLASH_SECTOR_SIZE>>1),anime_neko_bitmap_02,(FLASH_SECTOR_SIZE>>1));
-}
-
-bool test_write_flash_data(uint32_t addr) {
+bool test_write_flash_data(uint8_t idx) {
     // Check if the flash already contains the data
-    if (!memcmp(ld_buf, (uint32_t*)FLASH_RW_BASE, FLASH_GIF_FRAME_SPAN)) return true;
+    if (!memcmp(ld_buf, (uint32_t*)FLASH_RW_BASE + (idx*FLASH_GIF_FRAME_SPAN), FLASH_GIF_FRAME_SPAN)) return true;
     
     // Disable interrupts to ensure atomic flash write operations
     uint32_t intr = save_and_disable_interrupts();
@@ -21,13 +16,13 @@ bool test_write_flash_data(uint32_t addr) {
     // Erase flash area before writing new data
     for (int i = 0; i < FLASH_GIF_PAGE_CNT; i++) {
         flash_range_erase(
-            FLASH_GIF_ADDRESS(0) - XIP_BASE + (FLASH_SECTOR_SIZE * i), 
+            FLASH_GIF_ADDRESS(0) - XIP_BASE + (idx*FLASH_GIF_FRAME_SPAN) + (FLASH_SECTOR_SIZE * i), 
             FLASH_SECTOR_SIZE);
     }
 
     // this write the 1st jabber bitmap to flash
     flash_range_program(
-        FLASH_GIF_ADDRESS(0) - XIP_BASE, 
+        FLASH_GIF_ADDRESS(0) - XIP_BASE + (idx*FLASH_GIF_FRAME_SPAN), 
         ld_buf, 
         FLASH_GIF_FRAME_SPAN);
 
@@ -35,6 +30,46 @@ bool test_write_flash_data(uint32_t addr) {
     restore_interrupts(intr);
 
     return false;
+}
+
+void load_anime_neko_bitmaps() {
+    for (uint8_t n=0; n < GIF_MAX_FRAME_CNT; n++){
+        switch (n) {
+            case 0:
+                memcpy(ld_buf, jabber_frame_000, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 1:
+                memcpy(ld_buf, jabber_frame_001, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 2:
+                memcpy(ld_buf, jabber_frame_002, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 3:
+                memcpy(ld_buf, jabber_frame_003, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 4:
+                memcpy(ld_buf, jabber_frame_004, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 5:
+                memcpy(ld_buf, jabber_frame_005, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 6:
+                memcpy(ld_buf, jabber_frame_006, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 7:
+                memcpy(ld_buf, jabber_frame_007, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 8:
+                memcpy(ld_buf, jabber_frame_008, (FLASH_GIF_FRAME_SPAN));
+                break;
+            case 9:
+                memcpy(ld_buf, jabber_frame_009, (FLASH_GIF_FRAME_SPAN));
+                break;
+            default:
+                break;
+        }
+        test_write_flash_data(n);
+    }
 }
 
 /**
@@ -201,10 +236,15 @@ int main() {
     
     // test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
     load_anime_neko_bitmaps();
-    test_write_flash_data(FLASH_RW_BASE);
-    st7789_draw_picture_16bits(&gs_handle, 0, 0, 127, 127, (uint16_t *)FLASH_GIF_ADDRESS(0));
-    
+    uint8_t frame_idx = 0;
     while (true) {
+        // GOTCHA : The bitmap/frames are written as 16bit RGB565 values, but when written
+        // to flash the size reference is in bytes (not words). So when reading 
+        // as 16bit values we need to divide the byte offset by 2.
+        // NOTE: The function reads pixel values not bytes, hence the division by 2.
+        st7789_draw_picture_16bits(&gs_handle, 0, 0, 127, 127, (uint16_t *)FLASH_GIF_ADDRESS(0) + (frame_idx * (FLASH_GIF_FRAME_SPAN >> 1)));
+        frame_idx = (frame_idx + 1) % GIF_MAX_FRAME_CNT;
+        sleep_ms(100); // Add a small delay to control the frame rate
         // printf("Hello, world! Color: 0x%02X\n", color);
         // for (uint8_t y = 0; y < 8; y++) {
             // for (uint8_t x = 0; x < 16; x++) {
