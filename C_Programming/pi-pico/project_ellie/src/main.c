@@ -19,10 +19,15 @@ bool test_write_flash_data(uint32_t addr) {
     uint32_t intr = save_and_disable_interrupts();
 
     // Erase flash area before writing new data
-    flash_range_erase(FLASH_GIF_ADDRESS(0), FLASH_SECTOR_SIZE);
+    flash_range_erase(
+        FLASH_GIF_ADDRESS(0) - XIP_BASE, 
+        FLASH_SECTOR_SIZE);
 
     // this write the 1st 2 neko bitmaps to flash
-    flash_range_program(FLASH_GIF_ADDRESS(0), ld_buf, FLASH_SECTOR_SIZE);
+    flash_range_program(
+        FLASH_GIF_ADDRESS(0) - XIP_BASE, 
+        ld_buf, 
+        FLASH_SECTOR_SIZE);
 
     // Restore interrupts after flash write operations
     restore_interrupts(intr);
@@ -195,9 +200,8 @@ int main() {
     // test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
     load_anime_neko_bitmaps();
     test_write_flash_data(FLASH_RW_BASE);
-
-    // TODO: create 16bit RGB565 draw for direct FLASH read
-
+    st7789_draw_picture_16bits(&gs_handle, 60, 0, 60 + 31, 31, (uint16_t *)FLASH_GIF_ADDRESS(1));
+    
     while (true) {
         // printf("Hello, world! Color: 0x%02X\n", color);
         // for (uint8_t y = 0; y < 8; y++) {
