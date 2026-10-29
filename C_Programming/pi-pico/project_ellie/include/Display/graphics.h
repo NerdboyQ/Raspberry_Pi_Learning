@@ -3,18 +3,19 @@
 
 #include "libs/st7789/spi_interface/spi_interface.h"
 
-#define GIF_MAX_W _u(32)
-#define GIF_MAX_H _u(32)
-#define GIF_MAX_FRAME_CNT _u(10)
+#define GIF_MAX_W _u(0x80) // 128 pixels
+#define GIF_MAX_H _u(0x80) // 128 pixels
+#define GIF_MAX_FRAME_CNT _u(1)
 
 /**
  * @brief Flash GIF frame span
  * 
  * This defines the size of each GIF frame in flash memory.
- * 0x5000 corresponds to 20kB, allowing for a maximum of 10 frames.
+ * 0x80000 corresponds to 32kB, allowing for a maximum of 10 frames.
  */
-#define FLASH_GIF_FRAME_SPAN _u(0x5000)
-#define FLASH_GIF_META_BASE (FLASH_RW_BASE + FLASH_GIF_FRAME_SPAN * GIF_MAX_FRAME_CNT)
+#define FLASH_GIF_FRAME_SPAN (0x8000)
+#define FLASH_GIF_PAGE_CNT _u(FLASH_GIF_FRAME_SPAN / 0x1000)
+#define FLASH_GIF_META_BASE _u(FLASH_RW_BASE + FLASH_GIF_FRAME_SPAN * GIF_MAX_FRAME_CNT)
 #define FLASH_GIF_META_SPAN _u(0x20)
 
 /**

@@ -24,6 +24,6 @@ DFRobot_RGBPanel_t rgb_panel;
 static st7789_handle_t gs_handle;        /** st7789 handle */
 
 // Buffer for storing data read from flash memory sectors
-static uint8_t ld_buf[FLASH_SECTOR_SIZE];
+static uint8_t ld_buf[FLASH_GIF_FRAME_SPAN];
 
 #endif // MAIN_H
