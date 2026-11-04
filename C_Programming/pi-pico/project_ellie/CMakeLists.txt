@@ -51,7 +51,8 @@ if (TARGET tinyusb_device)
 
     # pull in common dependencies
     target_link_libraries(proj_ellie 
-        pico_stdlib)
+        pico_stdlib
+    )
 
     target_include_directories(proj_ellie PRIVATE
         ${CMAKE_CURRENT_LIST_DIR} 
@@ -65,7 +66,7 @@ if (TARGET tinyusb_device)
         hardware_spi
         hardware_sync
         pico_flash
-        pico_cyw43_arch_none    
+        pico_cyw43_arch_lwip_threadsafe_background
     )
 
     # enable usb output, disable uart output
