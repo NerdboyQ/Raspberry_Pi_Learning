@@ -69,6 +69,11 @@ if (TARGET tinyusb_device)
         pico_cyw43_arch_lwip_threadsafe_background
     )
 
+    target_compile_definitions(proj_ellie PRIVATE
+        CYW43_HOST_NAME=\"Big-Ellie-Ellie\"
+        PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS=5000
+    )
+
     # enable usb output, disable uart output
     pico_enable_stdio_usb(proj_ellie 1)
     pico_enable_stdio_uart(proj_ellie 0)
