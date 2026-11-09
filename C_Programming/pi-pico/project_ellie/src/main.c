@@ -297,7 +297,7 @@ int main() {
     }
     
     // test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
-    // load_anime_neko_bitmaps();
+    load_anime_neko_bitmaps();
     uint8_t frame_idx = 0;
     while (true) {
         // GOTCHA : The bitmap/frames are written as 16bit RGB565 values, but when written
