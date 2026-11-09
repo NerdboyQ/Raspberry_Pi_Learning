@@ -226,7 +226,7 @@ int main() {
     sleep_ms(100); // Allow time for the clear command to take effect
     
     wifi_conn_fail_t wifi_conn_status = false;
-    // wifi_conn_fail_t wifi_conn_status = wifi_connect();
+    wifi_conn_status = wifi_connect();
     // Set control mode flags (Disable scrolling, enable standard color operations)
     // rgb_panel.buf[0] = (0x01 << 3); // Flag bit set for static color/pixel writes
 
