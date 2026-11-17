@@ -3,6 +3,7 @@
 
 #include "DFRobot_RGBPanel/DFRobot_RGBPanel.h"
 #include "Display/_gif_test.h"
+#include "Display/weather_icons.h"
 
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins

@@ -588,6 +588,34 @@ typedef struct st7789_info_s
 } st7789_info_t;
 
 /**
+ * @brief st7789 display orientation enumeration
+ */
+typedef enum st7789_orientation_s
+{
+    ST7789_ORIENTATION_0_DEGREES,    // Default portrait mode
+    ST7789_ORIENTATION_90_DEGREES,   // Landscape mode
+    //ST7789_ORIENTATION_180_DEGREES,  // Inverted portrait mode
+    //ST7789_ORIENTATION_270_DEGREES   // Inverted landscape mode
+} st7789_orientation_t;
+
+
+#define ST7789_DEFAULT_ORIENTATION                             ST7789_ORIENTATION_0_DEGREES
+
+#define ST7789_BASIC_DEFAULT_ACCESS                            (ST7789_ORDER_PAGE_TOP_TO_BOTTOM | \
+                                                                ST7789_ORDER_COLUMN_LEFT_TO_RIGHT | \
+                                                                ST7789_ORDER_PAGE_COLUMN_NORMAL | \
+                                                                ST7789_ORDER_LINE_TOP_TO_BOTTOM | \
+                                                                ST7789_ORDER_COLOR_RGB | \
+                                                                ST7789_ORDER_REFRESH_LEFT_TO_RIGHT)             /**< access */
+
+#define ST7789_ROTATE_90_DEGREES                               (ST7789_ORDER_PAGE_TOP_TO_BOTTOM | \
+                                                                ST7789_ORDER_COLUMN_RIGHT_TO_LEFT | \
+                                                                ST7789_ORDER_PAGE_COLUMN_REVERSE | \
+                                                                ST7789_ORDER_LINE_TOP_TO_BOTTOM | \
+                                                                ST7789_ORDER_COLOR_RGB | \
+                                                                ST7789_ORDER_REFRESH_LEFT_TO_RIGHT)             /**< access */
+
+/**
  * @}
  */
 
@@ -2027,6 +2055,19 @@ uint8_t st7789_write_cmd(st7789_handle_t *handle, uint8_t cmd);
  * @note      none
  */
 uint8_t st7789_write_data(st7789_handle_t *handle, uint8_t data);
+
+/**
+ * @brief     Set the display orientation
+ * @param[in] *handle pointer to an st7789 handle structure
+ * @param[in] orientation display orientation
+ * @return    status code
+ *            - 0 success
+ *            - 1 set orientation failed
+ *            - 2 handle is NULL
+ *            - 3 handle is not initialized
+ * @note      none
+ */
+uint8_t st7789_set_orientation(st7789_handle_t *handle, st7789_orientation_t orientation);
 
 /**
  * @}

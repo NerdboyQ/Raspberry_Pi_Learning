@@ -225,6 +225,10 @@ int main() {
     st7789_clear(&gs_handle); // Clear the display to black
     sleep_ms(100); // Allow time for the clear command to take effect
     
+    //rotate display to landscape mode
+    st7789_set_orientation(&gs_handle, ST7789_ORIENTATION_90_DEGREES);
+    sleep_ms(100); // Allow time for the rotation to take effect
+    
     wifi_conn_fail_t wifi_conn_status = false;
     wifi_conn_status = wifi_connect();
     // Set control mode flags (Disable scrolling, enable standard color operations)
@@ -297,7 +301,10 @@ int main() {
     }
     
     // test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
-    load_anime_neko_bitmaps();
+    // load_anime_neko_bitmaps();
+    st7789_draw_picture_16bits(&gs_handle, 148, 10, 148+63, 10+63, (uint16_t *)weather_wind);
+    char* temp = "55 F"; 
+    st7789_write_string(&gs_handle, 148+12, 10+64+24, temp, strlen(temp), 0xDEADBEEF, ST7789_FONT_24);
     uint8_t frame_idx = 0;
     while (true) {
         // GOTCHA : The bitmap/frames are written as 16bit RGB565 values, but when written

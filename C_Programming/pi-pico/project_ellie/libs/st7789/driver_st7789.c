@@ -4684,3 +4684,52 @@ uint8_t st7789_info(st7789_info_t *info)
 
     return 0;                                                      /* success return 0 */
 }
+
+/**
+ * @brief     Set the display orientation
+ * @param[in] *handle pointer to an st7789 handle structure
+ * @param[in] orientation display orientation
+ * @return    status code
+ *            - 0 success
+ *            - 1 set orientation failed
+ *            - 2 handle is NULL
+ *            - 3 handle is not initialized
+ * @note      none
+ */
+uint8_t st7789_set_orientation(st7789_handle_t *handle, st7789_orientation_t orientation)
+{
+    if (handle == NULL)                                                         /* check handle */
+    {
+        return 2;                                                               /* return error */
+    }
+    if (handle->inited != 1)                                                    /* check handle initialization */
+    {
+        return 3;                                                               /* return error */
+    }
+
+    if (a_st7789_write_byte(handle, ST7789_CMD_MADCTL, ST7789_CMD) != 0)        /* write set memory data access control command */
+    {
+        handle->debug_print("st7789: write command failed.\n");                 /* write command failed */
+
+        return 1;                                                               /* return error */
+    }
+    
+    uint8_t data = ST7789_BASIC_DEFAULT_ACCESS;
+    switch (orientation)                                                        /* set orientation */
+    {
+        case ST7789_ORIENTATION_90_DEGREES:
+            data = ST7789_ROTATE_90_DEGREES;  /* set 90 degree orientation */
+            break;
+        default:
+            handle->debug_print("st7789: invalid orientation.\n");            /* invalid orientation */
+            return 1;                                                           /* return error */
+    }
+    if (st7789_set_memory_data_access_control(handle, data) != 0)                   /* write data */
+    {
+        handle->debug_print("st7789: write data failed.\n");                    /* write data failed */
+
+        return 1;                                                               /* return error */
+    }
+
+    return 0;                                                                   /* success return 0 */
+}
