@@ -859,10 +859,12 @@ uint8_t st7789_tearing_effect_line_on(st7789_handle_t *handle, st7789_tearing_ef
  *            - 1 set memory data access control failed
  *            - 2 handle is NULL
  *            - 3 handle is not initialized
- * @note      none
+ * @note      Changing the page/column exchange bit swaps the logical dimensions.
  */
 uint8_t st7789_set_memory_data_access_control(st7789_handle_t *handle, uint8_t order)
 {
+    uint8_t axes_swapped;
+
     if (handle == NULL)                                                         /* check handle */
     {
         return 2;                                                               /* return error */
@@ -883,6 +885,15 @@ uint8_t st7789_set_memory_data_access_control(st7789_handle_t *handle, uint8_t o
         handle->debug_print("st7789: write data failed.\n");                    /* write data failed */
 
         return 1;                                                               /* return error */
+    }
+
+    axes_swapped = (order & ST7789_ORDER_PAGE_COLUMN_REVERSE) != 0;
+    if (axes_swapped != handle->axes_swapped)
+    {
+        uint16_t column = handle->column;
+        handle->column = handle->row;
+        handle->row = column;
+        handle->axes_swapped = axes_swapped;
     }
 
     return 0;                                                                   /* success return 0 */
@@ -3312,6 +3323,7 @@ uint8_t st7789_init(st7789_handle_t *handle)
 
         return 1;                                                               /* return error */
     }
+    handle->axes_swapped = 0;
     handle->inited = 1;                                                         /* flag inited */
 
     return 0;                                                                   /* success return 0 */
@@ -3378,8 +3390,8 @@ uint8_t st7789_deinit(st7789_handle_t *handle)
  *            - 0 success
  *            - 2 handle is NULL
  *            - 3 handle is not initialized
- *            - 4 column > 240
- * @note      none
+ *            - 4 column exceeds the current orientation's limit
+ * @note      column is the logical width (up to 320 when axes are swapped)
  */
 uint8_t st7789_set_column(st7789_handle_t *handle, uint16_t column)
 {
@@ -3391,9 +3403,9 @@ uint8_t st7789_set_column(st7789_handle_t *handle, uint16_t column)
     {
         return 3;                                              /* return error */
     }
-    if (column > 240)                                          /* check column */
+    if (column > (handle->axes_swapped ? 320 : 240))          /* check column */
     {
-        handle->debug_print("st7789: column > 240.\n");        /* column > 240 */
+        handle->debug_print("st7789: column exceeds orientation limit.\n");
 
         return 4;                                              /* return error */
     }
@@ -3411,8 +3423,8 @@ uint8_t st7789_set_column(st7789_handle_t *handle, uint16_t column)
  *            - 0 success
  *            - 2 handle is NULL
  *            - 3 handle is not initialized
- *            - 4 row > 320
- * @note      none
+ *            - 4 row exceeds the current orientation's limit
+ * @note      row is the logical height (up to 240 when axes are swapped)
  */
 uint8_t st7789_set_row(st7789_handle_t *handle, uint16_t row)
 {
@@ -3424,9 +3436,9 @@ uint8_t st7789_set_row(st7789_handle_t *handle, uint16_t row)
     {
         return 3;                                              /* return error */
     }
-    if (row > 320)                                             /* check column */
+    if (row > (handle->axes_swapped ? 240 : 320))             /* check row */
     {
-        handle->debug_print("st7789: row > 320.\n");           /* row > 320 */
+        handle->debug_print("st7789: row exceeds orientation limit.\n");
 
         return 4;                                              /* return error */
     }
@@ -4694,10 +4706,12 @@ uint8_t st7789_info(st7789_info_t *info)
  *            - 1 set orientation failed
  *            - 2 handle is NULL
  *            - 3 handle is not initialized
- * @note      none
+ * @note      The logical width and height are swapped when changing axes.
  */
 uint8_t st7789_set_orientation(st7789_handle_t *handle, st7789_orientation_t orientation)
 {
+    uint8_t data;
+
     if (handle == NULL)                                                         /* check handle */
     {
         return 2;                                                               /* return error */
@@ -4707,16 +4721,11 @@ uint8_t st7789_set_orientation(st7789_handle_t *handle, st7789_orientation_t ori
         return 3;                                                               /* return error */
     }
 
-    if (a_st7789_write_byte(handle, ST7789_CMD_MADCTL, ST7789_CMD) != 0)        /* write set memory data access control command */
-    {
-        handle->debug_print("st7789: write command failed.\n");                 /* write command failed */
-
-        return 1;                                                               /* return error */
-    }
-    
-    uint8_t data = ST7789_BASIC_DEFAULT_ACCESS;
     switch (orientation)                                                        /* set orientation */
     {
+        case ST7789_ORIENTATION_0_DEGREES:
+            data = ST7789_BASIC_DEFAULT_ACCESS;
+            break;
         case ST7789_ORIENTATION_90_DEGREES:
             data = ST7789_ROTATE_90_DEGREES;  /* set 90 degree orientation */
             break;

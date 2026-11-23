@@ -568,6 +568,7 @@ typedef struct st7789_handle_s
     uint16_t column;                                             /**< column */
     uint16_t row;                                                /**< row */
     uint8_t format;                                              /**< format */
+    uint8_t axes_swapped;                                        /**< memory access axes swapped */
     uint8_t buf[ST7789_BUFFER_SIZE + 8];                         /**< inner buffer */
 } st7789_handle_t;
 
