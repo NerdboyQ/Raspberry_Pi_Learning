@@ -9,7 +9,8 @@
 #define WIFI_SSID "HouseOfBrennan"
 #define WIFI_PASSWORD "07042014"
 
-char *ip_addr;
+// Placeholder for IP address before Wi-Fi connection is established
+char *ip_addr = "192.168.1.00";
 
 /**
  * Failure categories when attempting Wi-Fi connection
@@ -288,23 +289,25 @@ int main() {
         case INIT_FAILURE:
             printf("Wi-Fi initialization failed. Check the CYW43 driver.\n");
             RGBPanel_fillAll(&rgb_panel, RED); // Fill the panel with RED to indicate failure
+            st7789_write_string(&gs_handle, 5, 132, ip_addr, strlen(ip_addr), 0xF800, ST7789_FONT_24); // Display IP address on the ST7789 panel
             break;
         case CONN_FAILURE:
             printf("Wi-Fi connection failed. Check SSID and password.\n");
             RGBPanel_fillAll(&rgb_panel, YELLOW); // Fill the panel with YELLOW to indicate failure
+            st7789_write_string(&gs_handle, 5, 132, ip_addr, strlen(ip_addr), 0xFFE0, ST7789_FONT_24); // Display IP address on the ST7789 panel
             break;
         default:
             printf("Wi-Fi connected successfully.\n");
             RGBPanel_fillAll(&rgb_panel, GREEN); // Fill the panel with GREEN to indicate success
-            st7789_write_string(&gs_handle, 5, 132, ip_addr, strlen(ip_addr), 0xDEADBEEF, ST7789_FONT_24); // Display IP address on the ST7789 panel
+            st7789_write_string(&gs_handle, 5, 132, ip_addr, strlen(ip_addr), 0x07E0, ST7789_FONT_24); // Display IP address on the ST7789 panel
             break;
     }
     
     // test_display_color_channels(&gs_handle); // Display RED color on the ST7789 panel
     // load_anime_neko_bitmaps();
-    st7789_draw_picture_16bits(&gs_handle, 148, 10, 148+63, 10+63, (uint16_t *)weather_wind);
+    st7789_draw_picture_16bits(&gs_handle, 196, 10, 196+63, 10+63, (uint16_t *)weather_wind);
     char* temp = "55 F"; 
-    st7789_write_string(&gs_handle, 148+12, 10+64+24, temp, strlen(temp), 0xDEADBEEF, ST7789_FONT_24);
+    st7789_write_string(&gs_handle, 196+12, 10+64+24, temp, strlen(temp), 0x07E0, ST7789_FONT_24);
     uint8_t frame_idx = 0;
     while (true) {
         // GOTCHA : The bitmap/frames are written as 16bit RGB565 values, but when written
