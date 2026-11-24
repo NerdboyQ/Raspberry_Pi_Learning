@@ -2,6 +2,7 @@
 #define INCLUDE_NETWORK_C
 
 #include "common.h"
+#include "hardware/rtc.h"
 
 // Callback triggered when the NTP server replies
 static void ntp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {

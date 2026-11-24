@@ -43,6 +43,7 @@ if (TARGET tinyusb_device)
     target_sources(proj_ellie PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/include/DFRobot_RGBPanel/DFRobot_RGBPanel.c
         ${CMAKE_CURRENT_LIST_DIR}/include/Display/graphics.c
+        ${CMAKE_CURRENT_LIST_DIR}/include/network.c
         ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789.c
         ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789_basic.c
         ${CMAKE_CURRENT_LIST_DIR}/libs/st7789/driver_st7789_interface_template.c
