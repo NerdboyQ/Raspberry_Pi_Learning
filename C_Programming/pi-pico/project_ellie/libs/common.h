@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 #include "pico/flash.h"
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
@@ -14,6 +15,19 @@
 #include "hardware/i2c.h"
 #include "hardware/spi.h"
 #include "hardware/sync.h"
+#include "lwip/dns.h"
+#include "lwip/pbuf.h"
+#include "lwip/udp.h"
+
+// NTP (Network Time Protocol) configuration for time synchronization
+
+#define NTP_SERVER "pool.ntp.org"
+#define NTP_MSG_LEN 48
+#define NTP_PORT 123
+#define NTP_DELTA 2208988800 // Seconds between Jan 1, 1900 and Jan 1, 1970
+
+// Flag indicating whether NTP synchronization is complete
+static volatile bool ntp_done = false;
 
 /**
  * @brief Flash read/write base address, this will
